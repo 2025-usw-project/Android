@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#0E1426"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- 온보딩 이미지 -->
+
+    <!-- 설명 -->
+
+    <ImageView
+        android:id="@+id/imgOnboarding"
+        android:layout_width="376dp"
+        android:layout_height="448dp"
+        android:layout_weight="8"
+        android:scaleType="fitCenter"
+        android:src="@drawable/onboarding1.png.png" />
+
+    <!-- 버튼 영역 -->
+    <TextView
+        android:id="@+id/txtDesc"
+        android:layout_width="match_parent"
+        android:layout_height="183dp"
+        android:layout_marginTop="25dp"
+        android:text="공용 세탁기 알림 앱은 세탁기의 사용 현황을 실시간으로 확인할수 있게 해, 불필요한 이동을 줄이고 사용자들의 편의를 높이는 서비스입니다."
+        android:textColor="#FFFFFF"
+        android:textSize="25dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="다음"
+            android:backgroundTint="#6CA2FF"
+            android:textColor="#FFFFFF"
+            android:padding="15dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
