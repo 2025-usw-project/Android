@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import com.example.a2gradeproject.OnboardingSimpleActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,24 +20,29 @@ public class LoginActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        btnSignUp = findViewById(R.id.btnSignUp);
+        btnSignUp = findViewById(R.id.btnSignUp); // ← XML에 추가한 버튼과 일치
 
-        // 로그인 버튼 클릭
         btnLogin.setOnClickListener(v -> {
-            String email = editEmail.getText().toString();
-            String password = editPassword.getText().toString();
+            String email = editEmail.getText().toString().trim();
+            String password = editPassword.getText().toString().trim();
 
-            if (email.equals("1234") && password.equals("1234")) {
-                // 세 번째 화면으로 이동
-                Intent intent = new Intent(LoginActivity.this, OnboardingSimpleActivity.class);
-                startActivity(intent);
+            // 관리자: 12345 / 12345
+            if (email.equals("12345") && password.equals("12345")) {
+                startActivity(new Intent(this, AdminDashboardActivity.class));
+                finish();
+            }
+            // 일반 사용자: 1234 / 1234
+            else if (email.equals("1234") && password.equals("1234")) {
+                startActivity(new Intent(this, OnboardingSimpleActivity.class));
+                finish();
+            } else {
+                editEmail.setError("이메일 또는 비밀번호가 올바르지 않습니다");
+                editPassword.setError("이메일 또는 비밀번호가 올바르지 않습니다");
             }
         });
 
-        // 회원가입 버튼 클릭 → 두 번째 화면(Register)
-        btnSignUp.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
-        });
+        btnSignUp.setOnClickListener(v ->
+                startActivity(new Intent(this, RegisterActivity.class))
+        );
     }
 }
