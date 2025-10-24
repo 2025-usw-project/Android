@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#10132E"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvPageTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="세탁기 상세 로그"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 흰 배경 큰 카드 -->
+        <LinearLayout
+            android:id="@+id/logCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_white_box"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:minHeight="360dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/tvCardTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="세탁기 상세 로그"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#222222"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tvCardBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:lineSpacingExtra="4dp"
+                android:text="내용을 불러오는 중..." />
+        </LinearLayout>
+
+        <!-- ✅ 나가기 버튼 -->
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="나가기"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#6750A4"
+            android:padding="12dp" />
+    </LinearLayout>
+</ScrollView>
+
