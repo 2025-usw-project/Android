@@ -1,39 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="#0E1426"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#0E1426"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:visibility="visible"
+    tools:visibility="visible">
 
-    <!-- 4번째 온보딩 이미지 -->
     <ImageView
-        android:id="@+id/imgOnboarding2"
+        android:id="@+id/imgOnboarding"
         android:layout_width="376dp"
         android:layout_height="448dp"
+        android:layout_weight="8"
         android:scaleType="fitCenter"
-        android:src="@drawable/onboarding4" />
+        android:src="@drawable/onboarding3" />
 
-    <!-- 설명 텍스트 -->
     <TextView
-        android:id="@+id/txtDesc2"
+        android:id="@+id/txtDesc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="183dp"
         android:layout_marginTop="25dp"
-        android:text="세탁 완료 후 알림을 보내주는 기능을 제공합니다."
+        android:text="세탁기에 자이로 센서를 달아 세탁 시작, 탈수 중, 세탁 종료를 알려줍니다."
         android:textColor="#FFFFFF"
         android:textSize="25dp" />
 
-    <!-- 시작하기 버튼 (이게 꼭 있어야 함) -->
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="시작하기"
-        android:backgroundTint="#6CA2FF"
-        android:textColor="#FFFFFF"
-        android:padding="15dp"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#6CA2FF"
+            android:padding="15dp"
+            android:text="시작하기"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 </LinearLayout>
