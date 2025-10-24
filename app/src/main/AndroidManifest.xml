@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme._2gradeproject">
 
-        <!-- ✅ 로그인: 앱 시작 시 실행되는 화면 -->
+        <!-- ✅ 로그인: 앱 시작 시 실행되는 화defef면 -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
