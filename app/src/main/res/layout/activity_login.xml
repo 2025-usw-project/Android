@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="24dp"
@@ -6,6 +7,23 @@
     android:layout_height="match_parent"
     android:background="#10132E">
 
+    <!-- 🔹 상단 앱 제목 -->
+    <TextView
+        android:id="@+id/appTitle"
+        android:text="Washing 알림"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:shadowColor="#6750A4"
+        android:shadowDx="0"
+        android:shadowDy="2"
+        android:shadowRadius="8"/>
+
+    <!-- 이메일 입력 -->
     <EditText
         android:id="@+id/editEmail"
         android:hint="이메일"
@@ -17,6 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <!-- 비밀번호 입력 -->
     <EditText
         android:id="@+id/editPassword"
         android:hint="비밀번호"
@@ -29,22 +48,26 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"/>
 
+    <!-- 로그인 버튼 -->
     <Button
         android:id="@+id/btnLogin"
         android:text="로그인"
         android:backgroundTint="#6750A4"
         android:textColor="#FFFFFF"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:padding="12dp"/>
 
+    <!-- 회원가입 안내 -->
     <TextView
         android:id="@+id/txtSignUp"
         android:text="계정이 없으신가요? 회원가입"
         android:textColor="#FFFFFF"
+        android:textSize="14sp"
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
 </LinearLayout>

@@ -2,17 +2,16 @@ package com.example.a2gradeproject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import com.example.a2gradeproject.OnboardingSimpleActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
     EditText editEmail, editPassword;
-    Button btnLogin;
-    TextView txtSignUp;
+    Button btnLogin, btnSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,18 +21,22 @@ public class LoginActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        txtSignUp = findViewById(R.id.txtSignUp);
+        btnSignUp = findViewById(R.id.btnSignUp);
 
+        // 로그인 버튼 클릭
         btnLogin.setOnClickListener(v -> {
             String email = editEmail.getText().toString();
             String password = editPassword.getText().toString();
 
-            // 여기서는 단순히 화면 이동만 (추후 Firebase Auth 연결 가능)
-            Intent intent = new Intent(LoginActivity.this, OnboardingActivity.class);
-            startActivity(intent);
+            if (email.equals("1234") && password.equals("1234")) {
+                // 세 번째 화면으로 이동
+                Intent intent = new Intent(LoginActivity.this, OnboardingSimpleActivity.class);
+                startActivity(intent);
+            }
         });
 
-        txtSignUp.setOnClickListener(v -> {
+        // 회원가입 버튼 클릭 → 두 번째 화면(Register)
+        btnSignUp.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });

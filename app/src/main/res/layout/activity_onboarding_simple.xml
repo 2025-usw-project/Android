@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="#0E1426"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
-
-    <!-- 온보딩 이미지 -->
-
-    <!-- 설명 -->
+    android:background="#0E1426"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:visibility="visible"
+    tools:visibility="visible">
 
     <ImageView
         android:id="@+id/imgOnboarding"
@@ -17,9 +16,8 @@
         android:layout_height="448dp"
         android:layout_weight="8"
         android:scaleType="fitCenter"
-        android:src="@drawable/onboarding1.png.png" />
+        android:src="@drawable/onboarding2" />
 
-    <!-- 버튼 영역 -->
     <TextView
         android:id="@+id/txtDesc"
         android:layout_width="match_parent"
@@ -32,19 +30,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:layout_marginTop="20dp">
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="다음"
             android:backgroundTint="#6CA2FF"
-            android:textColor="#FFFFFF"
-            android:padding="15dp"/>
-
+            android:padding="15dp"
+            android:text="다음"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
-
 </LinearLayout>

@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme._2gradeproject">
 
-        <!-- 로그인: 런처 -->
+        <!-- ✅ 로그인: 앱 시작 시 실행되는 화면 -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -22,12 +22,17 @@
             </intent-filter>
         </activity>
 
-        <!-- 온보딩 -->
-        <activity android:name=".OnboardingActivity" android:exported="false" />
-
-        <!-- 회원가입 -->
+        <!-- ✅ 회원가입 -->
         <activity android:name=".RegisterActivity" android:exported="false" />
 
+        <!-- ✅ 온보딩 1 -->
+        <activity android:name=".OnboardingSimpleActivity" android:exported="false" />
+
+        <!-- ✅ 온보딩 2 -->
+        <activity android:name=".OnboardingSimple2Activity" android:exported="false" />
+
+        <!-- ✅ 메인 (파란 화면 + Toast 버튼) -->
+        <activity android:name=".MainActivity" android:exported="false" />
     </application>
 
 </manifest>

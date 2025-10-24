@@ -1,32 +1,29 @@
 package com.example.a2gradeproject;
 
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText editName, editEmail, editPassword;
-    Button btnSignUp;
+    Button btnSignUp;  // "Sign Up" 버튼
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        editName = findViewById(R.id.editName);
-        editEmail = findViewById(R.id.editEmail);
-        editPassword = findViewById(R.id.editPassword);
-        btnSignUp = findViewById(R.id.btnSignUp);
+        btnSignUp = findViewById(R.id.btnSignUp);  // XML에 있는 Sign Up 버튼 id 맞춰주세요
 
         btnSignUp.setOnClickListener(v -> {
-            String name = editName.getText().toString();
-            String email = editEmail.getText().toString();
-            String password = editPassword.getText().toString();
-
-            // TODO: Firebase Auth 회원가입 처리
+            // 회원가입 완료 → 로그인 화면으로 이동
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            // 🔹 스택 정리: 뒤로가기 눌러도 Register로 안 돌아가게
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish(); // 현재 RegisterActivity 종료
         });
     }
 }
