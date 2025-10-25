@@ -11,11 +11,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey; // MasterKey 클래스
-import android.content.SharedPreferences;
 
 // Retrofit/Network 관련 import (패키지 경로 확인!)
-import com.su.washcall.network.ApiService;
-import com.su.washcall.network.RetrofitClient;
+import su.network.ApiService;
+import su.network.RetrofitClient;
 import com.su.washcall.network.model.LoginRequest;
 import com.su.washcall.network.model.LoginResponse;
 

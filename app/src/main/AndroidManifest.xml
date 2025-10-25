@@ -1,56 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.su.washcall">  <application
-    android:allowBackup="true"
-    android:dataExtractionRules="@xml/data_extraction_rules"
-    android:fullBackupContent="@xml/backup_rules"
-    android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:supportsRtl="true"
-    android:theme="@style/Theme._2gradeproject"
-    tools:targetApi="31">
+    package="com.su.washcall">
 
-    <activity
-        android:name=".LoginActivity"
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+    <!-- ✅ QR 코드 스캔용 카메라 권한 및 하드웨어 명시 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
-    <activity
-        android:name=".RegisterActivity"
-        android:exported="false" />
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme._2gradeproject"
+        tools:targetApi="31">
 
-    <activity
-        android:name=".OnboardingSimpleActivity"
-        android:exported="false" />
+        <!-- ✅ 앱 실행 시: 로그인 화면 -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <activity
-        android:name=".OnboardingSimple2Activity"
-        android:exported="false" />
+        <!-- ✅ 회원가입 -->
+        <activity android:name=".RegisterActivity" android:exported="false" />
 
-    <activity
-        android:name=".MainActivity"
-        android:exported="false" />
+        <!-- ✅ 온보딩 -->
+        <activity android:name=".OnboardingSimpleActivity" android:exported="false" />
+        <activity android:name=".OnboardingSimple2Activity" android:exported="false" />
 
-    <activity
-        android:name=".AdminDashboardActivity"
-        android:exported="false"
-        android:label="관리자 대시보드" />
+        <!-- ✅ 일반 사용자용 메인 -->
+        <activity android:name=".MainActivity" android:exported="false" />
 
-    <activity
-        android:name=".WashingDetailActivity"
-        android:exported="false"
-        android:label="세탁기 상세 로그" />
+        <!-- ✅ 관리자 모드 -->
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false"
+            android:label="관리자 대시보드" />
 
-    <activity
-        android:name=".CalibrationActivity"
-        android:exported="false"
-        android:label="캘리브레이션" />
+        <!-- ✅ 세탁기 상세 로그 -->
+        <activity
+            android:name=".WashingDetailActivity"
+            android:exported="false"
+            android:label="세탁기 상세 로그" />
 
-</application>
+        <!-- ✅ 캘리브레이션 -->
+        <activity
+            android:name=".CalibrationActivity"
+            android:exported="false"
+            android:label="캘리브레이션" />
+
+        <!-- ✅ QR 스캔 관련 Activity -->
+        <activity
+            android:name=".qr.QRScanActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".qr.StartScanActivity"
+            android:exported="true" />
+
+    </application>
 </manifest>

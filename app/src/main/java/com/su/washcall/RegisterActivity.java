@@ -10,9 +10,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 // Room/DB 및 Executor 관련 import (UserDao 추가 확인)
-import com.su.washcall.database.AppDatabase;
-import com.su.washcall.database.User;
-import com.su.washcall.database.UserDao; // UserDao 임포트 확인
+import su.database.AppDatabase;
+import su.database.User;
+import su.database.UserDao; // UserDao 임포트 확인
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors; // 백그라운드 작업을 위해 필요

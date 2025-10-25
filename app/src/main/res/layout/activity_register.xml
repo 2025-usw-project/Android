@@ -14,7 +14,7 @@
         android:hint="이름"
         android:inputType="textPersonName"
         android:padding="12dp"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textColorHint="#AAAAAA" />
 
     <EditText
@@ -23,7 +23,7 @@
         android:inputType="textEmailAddress"
         android:background="@android:drawable/edit_text"
         android:padding="12dp"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textColorHint="#AAAAAA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
         android:inputType="textPassword"
         android:background="@android:drawable/edit_text"
         android:padding="12dp"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textColorHint="#AAAAAA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
         android:id="@+id/btnSignUp"
         android:text="Sign Up"
         android:backgroundTint="#6750A4"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"/>

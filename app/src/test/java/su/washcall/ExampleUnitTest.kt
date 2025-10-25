@@ -1,4 +1,4 @@
-package com.su.washcall
+package su.washcall
 
 import org.junit.Test
 

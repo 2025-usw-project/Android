@@ -1,4 +1,4 @@
-package com.su.washcall.network // 네 패키지 이름 확인
+package su.network // 네 패키지 이름 확인
 
 import com.su.washcall.network.model.LoginRequest
 import com.su.washcall.network.model.LoginResponse
