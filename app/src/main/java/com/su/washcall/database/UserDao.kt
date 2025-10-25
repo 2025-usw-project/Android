@@ -12,6 +12,6 @@ interface UserDao {
     fun registerUser(user: User)
 
     // 로그인 (이메일과 비밀번호로 사용자 조회)
-    @Query("SELECT * FROM user_table WHERE userId = :userId AND password = :password LIMIT 1")
-    fun loginUser(userId: String, password: String): User?
+    @Query("SELECT * FROM user_table WHERE user_Snum = :user_snum AND user_password = :password LIMIT 1")
+    fun loginUser(user_snum: Int, password: String): User?
 }

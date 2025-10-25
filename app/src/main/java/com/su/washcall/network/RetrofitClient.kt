@@ -11,7 +11,7 @@ object RetrofitClient {
     // 여기에 너의 FastAPI 서버 기본 주소를 넣어야 해!
     // (예: "http://192.168.0.10:8000/" 또는 "http://10.0.2.2:8000/" (에뮬레이터용))
     // 반드시 "http://"로 시작하고 "/"로 끝나야 해.
-    private const val BASE_URL = "https://unconical-kyong-frolicsome.ngrok-free.dev/"
+    private const val BASE_URL = "https://charming-ladybird-roughly.ngrok-free.app/"
 
     // 네트워크 통신 로그를 찍어주는 OkHttp 클라이언트 설정
     private val okHttpClient: OkHttpClient by lazy {

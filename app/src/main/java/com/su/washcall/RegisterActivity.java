@@ -1,95 +1,134 @@
+// C:/Users/eclipseuser/AndroidStudioProjects/washcall/app/src/main/java/com/su/washcall/RegisterActivity.java
+
 package com.su.washcall;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
+import android.os.Bundle;import android.util.Log;
 import android.widget.Button;
-import android.widget.EditText; // 입력 필드 사용
+import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-// Room/DB 및 Executor 관련 import (UserDao 추가 확인)
-import com.su.washcall.database.AppDatabase;
-import com.su.washcall.database.User;
-import com.su.washcall.database.UserDao; // UserDao 임포트 확인
+// Retrofit/Network 관련 import
+import com.su.washcall.network.ApiService;
+import com.su.washcall.network.RetrofitClient;
+// ★★★ 로그인 요청이 아닌, 회원가입 요청 모델을 import 합니다. ★★★
+import com.su.washcall.network.model.RegisterRequest;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors; // 백그라운드 작업을 위해 필요
+import java.util.concurrent.Executors;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private final String TAG = "RegisterActivity_DB";
+    private final String TAG = "RegisterActivity_API";
 
-    // [수정] userId 입력 필드 추가
-    private EditText editUserId, editEmail, editPassword;
+    // UI 요소
+    private EditText editUserName, editUserId, editPassword;
     private Button btnSignUp;
 
-    // DB 작업을 위한 스레드 풀
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // 1. UI 요소 연결 (XML ID에 맞춰주세요!)
-        editUserId = findViewById(R.id.editUserId);     // ◀ [추가] XML에 이 ID가 있어야 함
-        editEmail = findViewById(R.id.editEmail);
-        editPassword = findViewById(R.id.editPassword);
+        // 1. Retrofit 서비스 초기화
+        apiService = RetrofitClient.INSTANCE.getInstance();
+
+        // 2. UI 요소 연결 (XML 레이아웃에 해당 ID가 있어야 합니다)
+        editUserName = findViewById(R.id.editUserName); // 이름 입력 필드
+        editUserId = findViewById(R.id.editUserId);     // 학번 입력 필드
+        editPassword = findViewById(R.id.editPassword); // 비밀번호 입력 필드
         btnSignUp = findViewById(R.id.btnSignUp);
 
-        // 2. DB 인스턴스 및 DAO 가져오기
-        final AppDatabase db = AppDatabase.Companion.getInstance(getApplicationContext());
-        final UserDao userDao = db.userDao();
-
+        // 3. 회원가입 버튼 클릭 리스너 설정
         btnSignUp.setOnClickListener(v -> {
-            // [수정] userId 값 가져오기
-            String userId = editUserId.getText().toString().trim();
-            String email = editEmail.getText().toString().trim();
+            String userName = editUserName.getText().toString().trim();
+            String userIdStr = editUserId.getText().toString().trim();
             String password = editPassword.getText().toString().trim();
 
-            // [수정] userId도 비어있는지 확인
-            if (userId.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "ID, 이메일, 비밀번호를 모두 입력하세요.", Toast.LENGTH_SHORT).show();
+            // 입력 값 검증
+            if (userName.isEmpty() || userIdStr.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "이름, 학번, 비밀번호를 모두 입력하세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // 3. 회원가입 로직 (백그라운드 스레드에서 실행)
+            // 4. 백그라운드 스레드에서 회원가입 요청 실행
             executorService.execute(() -> {
-                // [수정] userId를 포함하여 User 객체 생성
-                final User newUser = new User(userId, email, password, false); // isAdmin은 false로 기본 설정
-
                 try {
-                    userDao.registerUser(newUser); // DB에 사용자 정보 삽입
+                    int userIdInt = Integer.parseInt(userIdStr);
 
-                    // DB 작업 후 UI 업데이트는 메인 스레드에서
-                    runOnUiThread(() -> {
-                        Toast.makeText(RegisterActivity.this, "✅ 회원가입 성공!", Toast.LENGTH_LONG).show();
-
-                        // 4. 회원가입 완료 → 로그인 화면으로 이동
-                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    });
-                } catch (Exception e) {
-                    Log.e(TAG, "회원가입 DB 오류 발생", e);
-                    // DB 오류 발생 시 사용자에게 알림
-                    runOnUiThread(() ->
-                            Toast.makeText(RegisterActivity.this, "❌ 오류 발생! 다시 시도하세요.", Toast.LENGTH_LONG).show()
+                    // ▼▼▼▼▼ [핵심 수정] 서버 요구사항에 맞는 RegisterRequest 객체 생성 ▼▼▼▼▼
+                    // 4개의 인자: 이름, 비밀번호, 역할(일반 사용자=false), 학번
+                    RegisterRequest registerData = new RegisterRequest(
+                            userName,       // user_username
+                            password,       // user_password
+                            false,          // user_role
+                            userIdInt       // user_snum
                     );
+                    // ▲▲▲▲▲ [핵심 수정] ▲▲▲▲▲
+
+                    // API 동기 호출
+                    Response<Void> response = apiService.register(registerData).execute();
+
+                    // 5. UI 스레드에서 결과 처리
+                    runOnUiThread(() -> handleRegisterResponse(response));
+
+                } catch (NumberFormatException e) {
+                    // 학번이 숫자가 아닐 경우
+                    Log.w(TAG, "학번 형식이 올바르지 않습니다: " + userIdStr);
+                    runOnUiThread(() -> Toast.makeText(RegisterActivity.this, "학번은 숫자로 입력해주세요.", Toast.LENGTH_SHORT).show());
+                } catch (Exception e) {
+                    // 네트워크 오류 또는 기타 예외
+                    Log.e(TAG, "회원가입 요청 중 예외 발생!", e);
+                    runOnUiThread(() -> Toast.makeText(RegisterActivity.this, "❌ 네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
                 }
             });
         });
     }
 
-    // Activity 종료 시 Executor를 종료하여 메모리 누수를 방지합니다.
+    /**
+     * API 응답을 처리하는 메서드 (UI 스레드에서 호출됨)
+     */
+    private void handleRegisterResponse(Response<Void> response) {
+        if (response.isSuccessful()) {
+            // ✅ 회원가입 성공 (HTTP 2xx)
+            Log.d(TAG, "회원가입 성공! HTTP " + response.code());
+            Toast.makeText(this, "✅ 회원가입 성공! 로그인 화면으로 이동합니다.", Toast.LENGTH_LONG).show();
+
+            // 성공 시 로그인 화면으로 이동
+            // Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            // startActivity(intent);
+            finish(); // 현재 액티비티를 종료하여 이전 화면(로그인)으로 돌아가게 함
+        } else {
+            // ❌ 회원가입 실패 (HTTP 4xx, 5xx)
+            String errorMsg;
+            if (response.code() == 409) { // 409 Conflict: 이미 존재하는 사용자
+                errorMsg = "이미 존재하는 학번입니다.";
+            } else {
+                errorMsg = "서버 응답 오류 (코드: " + response.code() + ")";
+                try {
+                    if (response.errorBody() != null) {
+                        Log.w(TAG, "회원가입 실패, 오류 본문: " + response.errorBody().string());
+                    }
+                } catch (IOException e) { /* 오류 본문 파싱 실패는 무시 */ }
+            }
+
+            Log.e(TAG, "회원가입 실패: " + errorMsg);
+            Toast.makeText(this, "❌ " + errorMsg, Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // 액티비티가 종료될 때 스레드 풀을 안전하게 종료
         if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdown();
+            executorService.shutdownNow();
         }
     }
 }
