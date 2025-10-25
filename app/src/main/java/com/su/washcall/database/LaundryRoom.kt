@@ -1,12 +1,16 @@
-package su.database
+// 경로: app/src/main/java/com/su/washcall/database/LaundryRoom.kt
+package com.su.washcall.database
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "laundry_room_table")
 data class LaundryRoom(
     @PrimaryKey
-    val id: String, // 세탁실 고유 ID
-    val location: String, // 위치
-    val isAvailable: Boolean // 사용 가능 여부
+    @ColumnInfo(name = "room_id")
+    val roomId: Int,
+
+    @ColumnInfo(name = "room_name")
+    val roomName: String
 )

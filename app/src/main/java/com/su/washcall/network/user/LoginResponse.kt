@@ -1,5 +1,4 @@
-// 경로: app/src/main/java/com/su/washcall/network/model/LoginResponse.kt
-package com.su.washcall.network.model
+package com.su.washcall.network.user
 
 import com.google.gson.annotations.SerializedName
 

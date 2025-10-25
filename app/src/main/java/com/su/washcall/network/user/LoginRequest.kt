@@ -1,4 +1,4 @@
-package com.su.washcall.network.model
+package com.su.washcall.network.user
 
 import com.google.gson.annotations.SerializedName
 

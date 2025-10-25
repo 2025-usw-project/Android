@@ -2,7 +2,6 @@
 
 package com.su.washcall;
 
-import android.content.Intent;
 import android.os.Bundle;import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.su.washcall.network.ApiService;
 import com.su.washcall.network.RetrofitClient;
 // ★★★ 로그인 요청이 아닌, 회원가입 요청 모델을 import 합니다. ★★★
-import com.su.washcall.network.model.RegisterRequest;
+import com.su.washcall.network.user.RegisterRequest;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;

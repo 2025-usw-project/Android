@@ -16,8 +16,8 @@ import androidx.security.crypto.MasterKey;
 
 import com.su.washcall.network.ApiService;
 import com.su.washcall.network.RetrofitClient;
-import com.su.washcall.network.model.LoginRequest;
-import com.su.washcall.network.model.LoginResponse;
+import com.su.washcall.network.user.LoginRequest;
+import com.su.washcall.network.user.LoginResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -74,8 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * 🔹 서버 로그인 요청 (Retrofit)
-     * 서버 꺼짐/실패 시 로컬 로그인으로 전환
+     * 🔹 서버에 로그인 요청 (Retrofit)
      */
     private void performLogin(int userId, String password) {
         LoginRequest loginData = new LoginRequest(userId, password);
@@ -84,73 +83,32 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    // 로그인 성공
                     LoginResponse loginResponse = response.body();
-
                     String token = loginResponse.getAccessToken();
                     Log.d(TAG, "로그인 성공! 수신된 토큰: " + token);
-                    saveToken(token);
 
+                    saveToken(token); // 토큰 저장
                     Toast.makeText(LoginActivity.this, "✅ 로그인 성공!", Toast.LENGTH_SHORT).show();
 
+                    // 로그인 성공 후 온보딩 화면으로 이동
                     Intent intent = new Intent(LoginActivity.this, OnboardingSimpleActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    Log.w(TAG, "서버 로그인 실패, HTTP " + response.code() + " → 로컬 로그인 시도");
-                    Toast.makeText(LoginActivity.this, "서버 응답 실패 — 로컬 로그인으로 전환합니다.", Toast.LENGTH_SHORT).show();
-                    attemptLocalLogin(String.valueOf(userId), password);
+                    // 로그인 실패 (예: 잘못된 학번/비밀번호, 서버 오류 등)
+                    Log.w(TAG, "서버 로그인 실패, HTTP " + response.code());
+                    Toast.makeText(LoginActivity.this, "로그인에 실패했습니다. 학번과 비밀번호를 확인해주세요.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
-                Log.e(TAG, "❌ 네트워크 통신 오류 → 로컬 로그인 시도", t);
-                Toast.makeText(LoginActivity.this, "네트워크 오류 — 로컬 로그인 시도 중...", Toast.LENGTH_SHORT).show();
-                attemptLocalLogin(String.valueOf(userId), password);
+                // 네트워크 통신 자체 실패
+                Log.e(TAG, "❌ 네트워크 통신 오류", t);
+                Toast.makeText(LoginActivity.this, "네트워크에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.", Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    /**
-     * 🔹 서버 없이 로컬 계정 로그인 허용
-     */
-    private void attemptLocalLogin(String userIdStr, String password) {
-        // ⚙️ 개발 모드 감지
-        if (isDebugMode()) {
-            Toast.makeText(this, "🔧 디버그 모드: 로그인 통과", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, OnboardingSimpleActivity.class));
-            finish();
-            return;
-        }
-
-        // ✅ 테스트용 하드코딩 계정
-        if (userIdStr.equals("1234") && password.equals("1234")) {
-            Toast.makeText(this, "✅ 로컬 로그인 성공 (일반 사용자)", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, OnboardingSimpleActivity.class));
-            finish();
-            return;
-        }
-
-        if (userIdStr.equals("12345") && password.equals("12345")) {
-            Toast.makeText(this, "✅ 로컬 로그인 성공 (관리자)", Toast.LENGTH_SHORT).show();
-            Intent admin = new Intent(this, AdminDashboardActivity.class);
-            startActivity(admin);
-            finish();
-            return;
-        }
-
-        Toast.makeText(this, "❌ 로컬 로그인 실패 — 서버 연결 불가 또는 잘못된 계정", Toast.LENGTH_LONG).show();
-    }
-
-    /**
-     * 🔹 디버그 모드 여부 확인 (BuildConfig 대체)
-     */
-    private boolean isDebugMode() {
-        try {
-            return (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     /**
