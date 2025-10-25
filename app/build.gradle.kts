@@ -78,5 +78,6 @@ dependencies {
     // ✅ ZXing (QR 코드 스캔)
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
+
 }
 
