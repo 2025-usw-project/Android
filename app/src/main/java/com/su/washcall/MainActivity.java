@@ -1,83 +1,186 @@
-package com.su.washcall; // ◀ 패키지 이름 확인
+package com.su.washcall;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.Gravity;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-// Retrofit/Network 관련 import
-import su.network.ApiService;
-import su.network.RetrofitClient;
-import com.su.washcall.network.model.LoginRequest;
-import com.su.washcall.network.model.LoginResponse;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import retrofit2.Response; // Retrofit Response import
+// ⚙️ 서버 관련 임포트 (현재 사용 안 함)
+// import okhttp3.*;
+// import org.json.JSONObject;
+// import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "MainActivity_API_Test";
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private LinearLayout layoutMachineContainer;
+    private static final String TAG = "MainActivity_LocalMode";
+
+    // ⚙️ 서버 관련 변수 (현재 비활성화)
+    // private static final String WS_URL = "ws://192.168.0.5:8000/ws/machines";
+    // private WebSocket webSocket;
+    // private OkHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 1. Retrofit 서비스 객체 가져오기
-        final ApiService apiService = RetrofitClient.INSTANCE.getInstance();
+        layoutMachineContainer = findViewById(R.id.layoutMachineContainer);
 
-        // 2. [API TEST] 백그라운드 스레드에서 로그인 API 호출 시도
-        executorService.execute(() -> {
-            Log.d(TAG, "FastAPI 로그인 테스트 시작...");
+        // ✅ 로컬 테스트용: 세탁기 10대 표시
+        generateMachineViews(10);
 
+        // ⚙️ 서버 연결 주석 처리
+        // connectWebSocket();
+
+        // ✅ 로컬 모드 시뮬레이션 시작
+        simulateMachineStatus();
+    }
+
+    /**
+     * 세탁기 UI 생성 (10대)
+     */
+    private void generateMachineViews(int count) {
+        layoutMachineContainer.removeAllViews();
+
+        for (int i = 1; i <= count; i++) {
+            LinearLayout box = new LinearLayout(this);
+            box.setOrientation(LinearLayout.VERTICAL);
+            box.setGravity(Gravity.CENTER);
+            box.setPadding(16, 16, 16, 16);
+
+            ImageView img = new ImageView(this);
+            img.setId(1000 + i);
+            img.setImageResource(R.drawable.ic_launcher_foreground);
+            LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(150, 150);
+            img.setLayoutParams(imgParams);
+
+            TextView tv = new TextView(this);
+            tv.setId(2000 + i);
+            tv.setText("세탁기 " + i + "번\n상태: 대기중");
+            tv.setTextColor(Color.WHITE);
+            tv.setTextSize(16);
+            tv.setGravity(Gravity.CENTER);
+
+            box.addView(img);
+            box.addView(tv);
+            layoutMachineContainer.addView(box);
+        }
+    }
+
+    /**
+     * ⚙️ 서버 없이 상태를 순환 시뮬레이션
+     */
+    private void simulateMachineStatus() {
+        new Thread(() -> {
             try {
-                // 3. 테스트 로그인 데이터 생성 (서버에 미리 등록된 ID/PW가 필요합니다!)
-                LoginRequest loginData = new LoginRequest("test_user_id", "test_password");
+                int cycle = 0;
+                while (cycle < 10) { // 10번 반복
+                    for (int i = 1; i <= 10; i++) {
+                        String status;
+                        if (i % 3 == 0) status = "washing";
+                        else if (i % 2 == 0) status = "done";
+                        else status = "waiting";
 
-                // 4. API 호출 및 응답 받기
-                // .execute()는 동기 호출이며, ExecutorService 스레드에서 실행되므로 안전합니다.
-                Response<LoginResponse> response = apiService.login(loginData).execute();
-
-                // 5. UI 스레드에서 결과 처리 (Logcat 출력)
-                runOnUiThread(() -> {
-                    if (response.isSuccessful() && response.body() != null) {
-                        // HTTP 200-299 성공
-                        LoginResponse body = response.body();
-                        Log.i(TAG, "✅ API 통신 성공!");
-                        Log.i(TAG, "토큰: " + body.getAccess_token().substring(0, 10) + "...");
-                        Log.i(TAG, "역할: " + body.getUser_role());
-                        Toast.makeText(this, "API 연결 성공!", Toast.LENGTH_LONG).show();
-
-                    } else {
-                        // HTTP 4xx, 5xx 실패 (서버 오류, 인증 실패 등)
-                        Log.e(TAG, "❌ API 통신 실패: HTTP " + response.code());
-                        Log.e(TAG, "오류 본문: " + response.errorBody().toString());
-                        Toast.makeText(this, "API 통신 실패! 서버 상태 확인 필요.", Toast.LENGTH_LONG).show();
+                        int finalI = i;
+                        String finalStatus = status;
+                        runOnUiThread(() -> updateMachineStatus(finalI, finalStatus));
                     }
-                });
+                    cycle++;
+                    Thread.sleep(3000); // 3초마다 상태 갱신
+                }
+            } catch (InterruptedException e) {
+                Log.e(TAG, "시뮬레이션 중단", e);
+            }
+        }).start();
+    }
 
-            } catch (Exception e) {
-                // 네트워크 연결 오류, JSON 파싱 오류 등 예외 발생
-                Log.e(TAG, "❌ 네트워크 호출 중 예외 발생!", e);
-                runOnUiThread(() ->
-                        Toast.makeText(this, "❌ 네트워크 오류: 서버 주소 확인", Toast.LENGTH_LONG).show()
-                );
+    /**
+     * 상태 변경 UI 적용
+     */
+    private void updateMachineStatus(int id, String status) {
+        ImageView img = findViewById(1000 + id);
+        TextView tv = findViewById(2000 + id);
+
+        if (img == null || tv == null) return;
+
+        switch (status) {
+            case "washing":
+                img.setColorFilter(Color.parseColor("#FF9F00")); // 주황
+                tv.setText("세탁기 " + id + "번\n상태: 세탁 중");
+                break;
+            case "done":
+                img.setColorFilter(Color.parseColor("#008CFF")); // 파랑
+                tv.setText("세탁기 " + id + "번\n상태: 세탁 완료");
+                break;
+            default:
+                img.setColorFilter(Color.GRAY);
+                tv.setText("세탁기 " + id + "번\n상태: 대기 중");
+                break;
+        }
+    }
+
+    // ⚙️ 서버 연결 함수 주석화
+    /*
+    private void connectWebSocket() {
+        client = new OkHttpClient.Builder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(WS_URL)
+                .build();
+
+        webSocket = client.newWebSocket(request, new WebSocketListener() {
+
+            @Override
+            public void onOpen(WebSocket webSocket, Response response) {
+                Log.d(TAG, "✅ WebSocket 연결 성공");
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, String text) {
+                Log.d(TAG, "📩 서버 메시지 수신: " + text);
+                runOnUiThread(() -> handleMachineUpdate(text));
+            }
+
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+                Log.e(TAG, "❌ WebSocket 오류", t);
+            }
+
+            @Override
+            public void onClosed(WebSocket webSocket, int code, String reason) {
+                Log.d(TAG, "🔌 WebSocket 종료됨: " + reason);
             }
         });
-
-        // ... (다른 onCreate 코드는 그대로 유지) ...
     }
+
+    private void handleMachineUpdate(String jsonText) {
+        try {
+            JSONObject obj = new JSONObject(jsonText);
+            int id = obj.getInt("machine_id");
+            String status = obj.getString("status");
+            updateMachineStatus(id, status);
+        } catch (Exception e) {
+            Log.e(TAG, "JSON 파싱 오류", e);
+        }
+    }
+    */
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Executor 종료 (메모리 누수 방지)
-        if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdownNow(); // 강제 종료
-        }
+
+        // ⚙️ 서버 관련 종료 처리 주석
+        /*
+        if (webSocket != null) webSocket.close(1000, "앱 종료");
+        if (client != null) client.dispatcher().executorService().shutdown();
+        */
     }
 }

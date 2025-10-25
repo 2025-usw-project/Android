@@ -16,4 +16,13 @@ public class QRResponse {
     public String getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return "QRResponse{" +
+                "message='" + message + '\'' +
+                ", machine_count=" + machine_count +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

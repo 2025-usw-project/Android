@@ -1,3 +1,4 @@
+// 경로: app/src/main/java/su/database/AppDatabase.kt
 package su.database
 
 import android.content.Context
@@ -5,17 +6,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-// User 관련 코드를 모두 제거하고 LaundryRoom만 포함합니다.
 @Database(
-    entities = [LaundryRoom::class, User::class], // User::class 제거
-    version = 3, // 버전은 다시 1로 초기화
+    entities = [LaundryRoom::class, User::class, WashingMachine::class], // ✅ 추가됨
+    version = 4, // 🔼 버전 올리기 (변경사항 반영)
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    // User DAO는 제거하고 LaundryRoomDao만 남깁니다.
     abstract fun laundryRoomDao(): LaundryRoomDao
     abstract fun userDao(): UserDao
+    abstract fun washingMachineDao(): WashingMachineDao // ✅ 추가됨
 
     companion object {
         @Volatile
@@ -27,8 +27,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "laundry_app_database"
-                ).fallbackToDestructiveMigration().build()
-                //버전을 올리면 db 삭제 후 재생성 허용
+                )
+                    .fallbackToDestructiveMigration() // DB 변경 시 자동 재생성
+                    .build()
                 INSTANCE = instance
                 instance
             }
