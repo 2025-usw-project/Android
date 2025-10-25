@@ -22,8 +22,7 @@ import com.su.washcall.network.model.LoginResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;

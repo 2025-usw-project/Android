@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.su.washcall">
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- ✅ QR 코드 스캔용 카메라 권한 및 하드웨어 명시 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />

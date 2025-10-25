@@ -16,7 +16,7 @@ interface ApiService {
      * @param loginRequest 학번(snum)과 비밀번호(password)를 포함하는 요청 객체
      * @return LoginResponse (access_token 포함)를 담은 Call 객체
      */
-    @POST("/auth/login")
+    @POST("login")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
     /**
@@ -24,6 +24,6 @@ interface ApiService {
      * @param registerRequest 이름, 비밀번호, 역할, 학번을 포함하는 요청 객체
      * @return 응답 본문이 없으므로 Void 타입을 담은 Call 객체
      */
-    @POST("/auth/register")
+    @POST("register")
     fun register(@Body registerRequest: RegisterRequest): Call<Void>
 }

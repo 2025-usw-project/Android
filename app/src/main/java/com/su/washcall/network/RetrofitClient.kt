@@ -1,4 +1,4 @@
-package su.network // 네 패키지 이름 확인!
+package com.su.washcall.network
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor // Logcat에 통신 로그를 찍기 위함
