@@ -1,5 +1,6 @@
 package com.example.a2gradeproject.database
 
+import android.adservices.adid.AdId
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,6 +13,6 @@ interface UserDao {
     fun registerUser(user: User)
 
     // 로그인 (이메일과 비밀번호로 사용자 조회)
-    @Query("SELECT * FROM user_table WHERE email = :email AND password = :password LIMIT 1")
-    fun loginUser(email: String, password: String): User?
+    @Query("SELECT * FROM user_table WHERE userId = :userId AND password = :password LIMIT 1")
+    fun loginUser(userId: String, password: String): User?
 }

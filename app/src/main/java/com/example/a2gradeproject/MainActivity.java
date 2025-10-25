@@ -34,35 +34,6 @@ public class MainActivity extends AppCompatActivity {
             final AppDatabase db = AppDatabase.Companion.getInstance(getApplicationContext());
             final LaundryRoomDao dao = db.laundryRoomDao();
             Log.d(TAG, "DB 인스턴스 및 DAO 가져오기 성공.");
-
-            // 2. [임시] 가짜 데이터 삽입 (Executor를 사용해 백그라운드에서 실행)
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d(TAG, "Executor 시작됨! 데이터 삽입 시도.");
-
-                    try {
-                        // DAO와 DB 인스턴스를 다시 가져오는 대신, 밖에서 가져온 것을 사용합니다.
-                        // DB 인스턴스/DAO를 람다 밖에서 final로 선언했으므로, 여기서 사용 가능해야 합니다.
-
-                        // 3. 가짜 세탁실 데이터를 만듭니다. (변수를 여기서 다시 선언)
-                        final LaundryRoom mockRoom1 = new LaundryRoom("room_A1", "기숙사 A동 1층", true);
-                        final LaundryRoom mockRoom2 = new LaundryRoom("room_B1", "기숙사 B동 1층", false);
-
-                        // DAO는 람다 바깥에서 final로 선언된 것을 사용합니다.
-                        // final LaundryRoomDao dao = db.laundryRoomDao(); // 이 줄은 제거하고, 바깥의 'dao' 변수를 사용합니다.
-
-                        // 4. DAO를 통해 DB에 데이터를 삽입합니다.
-                        dao.insertOrUpdate(mockRoom1); // 여기서 mockRoom1을 찾을 수 있습니다.
-                        dao.insertOrUpdate(mockRoom2);
-
-                        Log.d(TAG, "데이터 삽입 완료! App Inspection 확인.");
-                    } catch (Exception dbException) {
-                        Log.e(TAG, "데이터 삽입 중 오류 발생!", dbException);
-                    }
-                }
-            });
-
         } catch (Exception e) {
             // DB 인스턴스 생성 실패 시 (매우 희귀)
             Log.e(TAG, "Room DB 초기화 중 치명적인 오류 발생!", e);
