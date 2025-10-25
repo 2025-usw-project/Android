@@ -1,4 +1,4 @@
-package com.example.a2gradeproject
+package com.su.washcall
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

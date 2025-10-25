@@ -1,4 +1,4 @@
-package com.example.a2gradeproject;
+package com.su.washcall;
 
 import android.content.Intent;
 import android.os.Bundle;

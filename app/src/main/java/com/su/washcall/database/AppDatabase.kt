@@ -1,4 +1,4 @@
-package com.example.a2gradeproject.database
+package com.su.washcall.database
 
 import android.content.Context
 import androidx.room.Database
@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 // User 관련 코드를 모두 제거하고 LaundryRoom만 포함합니다.
 @Database(
     entities = [LaundryRoom::class, User::class], // User::class 제거
-    version = 2, // 버전은 다시 1로 초기화
+    version = 3, // 버전은 다시 1로 초기화
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

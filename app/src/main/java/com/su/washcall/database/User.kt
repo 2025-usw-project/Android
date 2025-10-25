@@ -1,4 +1,4 @@
-package com.example.a2gradeproject.database
+package com.su.washcall.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

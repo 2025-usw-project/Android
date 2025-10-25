@@ -1,4 +1,4 @@
-package com.example.a2gradeproject.database
+package com.su.washcall.database
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -8,11 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LaundryRoomDao {
-    // DB에 데이터 삽입/수정 (suspend 키워드 사용)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrUpdate(laundryRoom: LaundryRoom)
+    fun insertOrUpdate(laundryRoom: LaundryRoom) // ◀ suspend 없음!
 
-    // DB 데이터 실시간 구독 (Flow 사용)
     @Query("SELECT * FROM laundry_room_table")
     fun getAllLaundryRooms(): Flow<List<LaundryRoom>>
 }

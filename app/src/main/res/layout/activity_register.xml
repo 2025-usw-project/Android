@@ -30,6 +30,19 @@
         android:layout_marginTop="12dp"/>
 
     <EditText
+
+        android:id="@+id/editUserId"
+        android:hint="학번"
+        android:inputType="number"
+        android:background="@android:drawable/edit_text"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAAAAA"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
         android:id="@+id/editPassword"
         android:hint="비밀번호"
         android:inputType="textPassword"

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "695727341464",
+    "project_id": "washcall-server",
+    "storage_bucket": "washcall-server.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695727341464:android:9939d6aae562a29e6fb5ed",
+        "android_client_info": {
+          "package_name": "com.su.washcall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNeO5HNDFHJrf1zN3ZpYNzVQTq_EqemNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

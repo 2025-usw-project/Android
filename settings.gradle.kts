@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "2gradeproject"
+rootProject.name = "washcall"
 include(":app")
  

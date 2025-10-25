@@ -1,6 +1,5 @@
-package com.example.a2gradeproject.database
+package com.su.washcall.database
 
-import android.adservices.adid.AdId
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy

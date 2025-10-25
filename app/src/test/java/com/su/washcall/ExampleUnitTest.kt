@@ -1,4 +1,4 @@
-package com.example.a2gradeproject
+package com.su.washcall
 
 import org.junit.Test
 
