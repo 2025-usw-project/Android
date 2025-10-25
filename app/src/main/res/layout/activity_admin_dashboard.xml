@@ -48,6 +48,14 @@
             android:textSize="16sp"
             android:layout_marginBottom="24dp" />
 
+        <!-- ✅ 세탁기 칸이 자동 생성될 영역 -->
+        <LinearLayout
+            android:id="@+id/layoutMachines"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp" />
+
         <!-- 캘리브레이션 버튼 -->
         <Button
             android:id="@+id/btnCalibration"

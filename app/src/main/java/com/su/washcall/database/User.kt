@@ -1,4 +1,4 @@
-package com.su.washcall.database
+package su.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

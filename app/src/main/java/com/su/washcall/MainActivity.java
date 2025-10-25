@@ -7,14 +7,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 // Retrofit/Network 관련 import
-import com.su.washcall.network.ApiService;
-import com.su.washcall.network.RetrofitClient;
+import su.network.ApiService;
+import su.network.RetrofitClient;
 import com.su.washcall.network.model.LoginRequest;
 import com.su.washcall.network.model.LoginResponse;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit; // 시간 제한을 위해 추가 (선택 사항)
 
 import retrofit2.Response; // Retrofit Response import
 

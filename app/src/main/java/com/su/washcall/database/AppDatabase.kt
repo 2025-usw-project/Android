@@ -1,4 +1,4 @@
-package com.su.washcall.database
+package su.database
 
 import android.content.Context
 import androidx.room.Database

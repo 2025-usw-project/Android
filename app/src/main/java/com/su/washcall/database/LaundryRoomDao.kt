@@ -1,4 +1,4 @@
-package com.su.washcall.database
+package su.database
 
 import androidx.room.Dao
 import androidx.room.Insert
