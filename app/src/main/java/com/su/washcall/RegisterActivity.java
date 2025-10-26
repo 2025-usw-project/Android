@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
                     RegisterRequest registerData = new RegisterRequest(
                             userName,       // user_username
                             password,       // user_password
-                            false,          // user_role
+                            true,          // user_role
                             userIdInt       // user_snum
                     );
                     // ▲▲▲▲▲ [핵심 수정] ▲▲▲▲▲

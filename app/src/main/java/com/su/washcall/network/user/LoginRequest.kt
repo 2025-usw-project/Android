@@ -10,5 +10,8 @@ data class LoginRequest(
     val studentNumber: Int, // 학번 (Int)
 
     @SerializedName("user_password")
-    val password: String  // 비밀번호 (String)
+    val password: String,  // 비밀번호 (String)
+
+    @SerializedName("fcm_token")
+    val fcmToken: String // FCM 토큰 (String)
 )

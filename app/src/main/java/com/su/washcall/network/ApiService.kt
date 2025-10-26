@@ -88,4 +88,17 @@ interface ApiService {
         @Header("Authorization") accessToken: String,
         @Body body: AddRoomRequest // 이 body의 내용이 1단계에서 수정한대로 자동으로 적용됨
     ): Response<RoomResponse>
+
+    /**
+     * 🔹 [추가] 사용자가 특정 세탁실을 구독합니다.
+     * @param roomName 구독할 세탁실의 이름
+     * @param userSnum 사용자 학번
+     * @param accessToken 인증 토큰
+     */
+    @GET("/device_subscribe")
+    suspend fun subscribeToRoom(
+        @Header("Authorization") accessToken: String,
+        @Query("room_name") roomName: String,
+        @Query("user_snum") userSnum: String
+    ): Response<SubscribeResponse>
 }
