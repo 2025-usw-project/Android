@@ -9,6 +9,8 @@ import com.su.washcall.network.washmachinResponse.LoadDataResponse
 import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 
+
+
 /**
  * 세탁실/세탁기 데이터의 출처(네트워크, 로컬DB)를 관리하는 클래스.
  * ViewModel은 이 Repository를 통해서만 데이터에 접근합니다.
@@ -17,8 +19,8 @@ import java.io.IOException
  * @param apiService 원격 서버에 접근하기 위한 Retrofit 서비스
  */
 class LaundryRepository(
-    private val laundryDao: LaundryDao,
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val laundryDao: LaundryDao
 ) {
 
     // --- 1. DB에서 데이터 읽기 ---
@@ -26,7 +28,6 @@ class LaundryRepository(
     // DB에 저장된 모든 세탁실 목록을 Flow 형태로 가져옵니다.
     // UI는 이 Flow를 관찰(collect)하여 데이터 변경을 실시간으로 감지할 수 있습니다.
     val allLaundryRooms: Flow<List<LaundryRoom>> = laundryDao.getAllLaundryRooms()
-
     // 특정 세탁실에 속한 세탁기 목록을 Flow 형태로 가져옵니다.
     fun getWashingMachinesByRoom(roomId: Int): Flow<List<WashingMachine>> {
         return laundryDao.getWashingMachinesByRoom(roomId)
@@ -95,4 +96,6 @@ class LaundryRepository(
         val machineId = serverData.firstOrNull { it.roomName == roomName }?.machineId ?: 0
         return machineId / 100 // 예시 규칙
     }
+
+
 }
