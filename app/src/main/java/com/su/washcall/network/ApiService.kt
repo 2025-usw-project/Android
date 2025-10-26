@@ -12,6 +12,9 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
+import com.su.washcall.network.washmachinResponse.MachineInfo // 👈 2단계에서 만들 클래스 import
+import retrofit2.http.GET // 👈 GET import
+import retrofit2.http.Query // 👈 Query import
 
 interface ApiService {
 
@@ -31,7 +34,7 @@ interface ApiService {
     @POST("/device_subscribe")
     fun subscribeDevice(
         @Header("access_token") accessToken: String,
-        @Body body: DeviceRequest
+        @Body body: RoomSubscribeRequest
     ): Response<MessageResponse>
 
     /**
@@ -68,4 +71,13 @@ interface ApiService {
         @Header("access_token") accessToken: String,
         @Body body: AdminAddDeviceRequest
     ): Response<MessageResponse>
+
+    /**
+     * 🔹 [추가] 관리자가 특정 세탁실의 기기 목록을 조회합니다.
+     */
+    @GET("/admin/machines") // 서버의 실제 엔드포인트에 맞게 수정 필요
+    suspend fun getMachineList(
+        @Header("access_token") accessToken: String,
+        @Query("room_id") roomId: Int // 특정 세탁실의 기기를 조회
+    ): Response<List<MachineInfo>> // MachineInfo 객체의 리스트를 받음
 }

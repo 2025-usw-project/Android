@@ -1,78 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#10132E"
-    android:padding="16dp">
+    android:background="#10132E">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- 기존 화면 내용 (스크롤 가능) -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-        <!-- 제목 -->
-        <TextView
-            android:id="@+id/tvTitle"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🧺 관리자 모드"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="26sp"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:gravity="center_horizontal">
 
-        <!-- 세탁기 수 선택 -->
-        <TextView
-            android:id="@+id/tvMachineCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="세탁기 수 선택하기"
-            android:textSize="18sp"
-            android:textColor="#03DAC5"
-            android:gravity="center"
-            android:padding="12dp"
-            android:background="#1E1E3E"
-            android:layout_marginBottom="12dp"
-            android:clickable="true"
-            android:focusable="true" />
+            <!-- 제목 -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🧺 관리자 모드"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="26sp"
+                android:gravity="center"
+                android:layout_marginBottom="24dp" />
 
-        <!-- 세탁기 수 요약 -->
-        <TextView
-            android:id="@+id/tvSummary"
+            <!-- 세탁기 수 선택 -->
+            <TextView
+                android:id="@+id/tvMachineCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="세탁기 수 선택하기"
+                android:textSize="18sp"
+                android:textColor="#03DAC5"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="#1E1E3E"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- 세탁기 수 요약 -->
+            <TextView
+                android:id="@+id/tvSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="현재 세탁기 수: 0대"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- ✅ 세탁기 칸이 자동 생성될 영역 -->
+            <LinearLayout
+                android:id="@+id/layoutMachines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp" />
+
+            <!-- 캘리브레이션 버튼 -->
+            <Button
+                android:id="@+id/btnCalibration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="캘리브레이션 시작"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#6750A4"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 로그 조회 버튼 -->
+            <Button
+                android:id="@+id/btnLogs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="상세 로그 조회"
+                android:textColor="#000000"
+                android:backgroundTint="#03DAC5" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ▼▼▼ 로딩 오버레이 ▼▼▼ -->
+    <!-- 이 뷰가 ScrollView 위를 덮게 됩니다. -->
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="현재 세탁기 수: 0대"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:layout_marginBottom="24dp" />
+            android:layout_gravity="center" />
 
-        <!-- ✅ 세탁기 칸이 자동 생성될 영역 -->
-        <LinearLayout
-            android:id="@+id/layoutMachines"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="24dp" />
+    </FrameLayout>
+    <!-- ▲▲▲ 여기까지가 추가된 부분 ▲▲▲ -->
 
-        <!-- 캘리브레이션 버튼 -->
-        <Button
-            android:id="@+id/btnCalibration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="캘리브레이션 시작"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#6750A4"
-            android:layout_marginBottom="16dp" />
-
-        <!-- 로그 조회 버튼 -->
-        <Button
-            android:id="@+id/btnLogs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="상세 로그 조회"
-            android:textColor="#000000"
-            android:backgroundTint="#03DAC5" />
-    </LinearLayout>
-</ScrollView>
+</RelativeLayout>
