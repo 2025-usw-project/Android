@@ -61,11 +61,12 @@
         <activity
             android:name=".qr.QRScanActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            />
 
         <activity
             android:name=".qr.StartScanActivity"
-            android:exported="true" />
+            android:exported="false"
+            android:screenOrientation="portrait" /> />
 
         <!-- ✅ Firebase 메시징 서비스 (FCM 토큰 및 푸시 수신용) -->
         <service

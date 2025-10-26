@@ -2,7 +2,7 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.google.gms.google.services) apply false // Firebase 연결 플러그인
+    // Firebase 연결 플러그인
     /*
     id("com.google.gms.google-services") version "4.4.4" apply false
     */

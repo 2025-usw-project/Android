@@ -1,9 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.devtools.ksp") version "1.9.22-1.0.17" ////
-    id("com.google.gms.google-services")//✅ Firebase 연동용
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17" // ✅ Kotlin 1.9 대응 KSP
+    id("com.google.gms.google-services") // ✅ Firebase 플러그인
 }
+
 android {
     namespace = "com.su.washcall"
     compileSdk = 34
@@ -14,7 +15,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -39,45 +39,46 @@ android {
 }
 
 dependencies {
-    // ✅ 기본 AndroidX 라이브러리
+    // ✅ AndroidX 기본
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // ✅ Firebase BoM (버전 일괄 관리)
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    // ✅ Firebase (Kotlin 1.9 호환)
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-analytics")
-    // ✅ Android Security (암호화 저장소용)
+    implementation("com.google.firebase:firebase-messaging")
+
+    // ✅ Android 보안 (암호화 저장소)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // ✅ Room (로컬 DB)
+    // ✅ Room
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
 
-    // ✅ 코루틴 (비동기)
+    // ✅ 코루틴
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // ✅ Lifecycle (lifecycleScope 사용)
+    // ✅ Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
-    // ✅ Retrofit (서버 통신)
+    // ✅ Retrofit + OkHttp
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-    // ✅ ZXing (QR 코드 스캔)
+    // ✅ ZXing (QR 코드)
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
 
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0") //재용이가 만들라고한거//
-    implementation("com.auth0.android:jwtdecode:2.0.2")//jwt해석//
+    // ✅ JWT 해석
+    implementation("com.auth0.android:jwtdecode:2.0.2")
 }
-

@@ -14,6 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import com.auth0.android.jwt.Claim;
+import com.auth0.android.jwt.JWT;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.su.washcall.network.ApiService;
 import com.su.washcall.network.RetrofitClient;
 import com.su.washcall.network.user.LoginRequest;
@@ -28,11 +33,9 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final String TAG = "LoginActivity_API";
-
+    private final String TAG = "LoginActivity_FCM";
     private EditText editUserId, editPassword;
     private Button btnLogin, btnSignUp;
-
     private ApiService apiService;
 
     @Override
@@ -40,16 +43,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // 1. Retrofit 서비스 초기화
         apiService = RetrofitClient.INSTANCE.getInstance();
-
-        // 2. UI 요소 연결
         editUserId = findViewById(R.id.editUserId);
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnSignUp = findViewById(R.id.btnSignUp);
 
-        // 3. 로그인 버튼
         btnLogin.setOnClickListener(v -> {
             String userIdStr = editUserId.getText().toString().trim();
             String password = editPassword.getText().toString().trim();
@@ -58,45 +57,79 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "학번과 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             try {
                 int userIdInt = Integer.parseInt(userIdStr);
-                performLogin(userIdInt, password);
+                // ▼▼▼ [수정] 로그인 함수 호출 지점 ▼▼▼
+                getFcmTokenAndLogin(userIdInt, password);
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "학번은 숫자로 입력해주세요.", Toast.LENGTH_SHORT).show();
             }
         });
+        btnSignUp.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
+    }
 
-        // 4. 회원가입 버튼
-        btnSignUp.setOnClickListener(v ->
-                startActivity(new Intent(this, RegisterActivity.class))
-        );
+    /**
+     * 🔹 1. FCM 토큰을 비동기적으로 가져옵니다.
+     * 🔹 2. 토큰을 성공적으로 가져오면 performLogin 함수를 호출합니다.
+     */
+    private void getFcmTokenAndLogin(int userId, String password) {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        String fcmToken;
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "FCM 토큰 가져오기 실패", task.getException());
+                            // ▼▼▼ [수정] 실패하더라도 null이 아닌 임의의 문자열을 보내야 서버에서 422 에러가 나지 않습니다. ▼▼▼
+                            fcmToken = "token_fetch_failed";
+                            Toast.makeText(LoginActivity.this, "푸시 알림 토큰 생성에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // 새 FCM 등록 토큰 가져오기
+                            fcmToken = task.getResult();
+                        }
+
+                        Log.d(TAG, "FCM Token to be sent: " + fcmToken);
+                        // 토큰을 가져온 후(성공하든 실패하든) 로그인 요청 실행
+                        performLogin(userId, password, fcmToken);
+                    }
+                });
     }
 
     /**
      * 🔹 서버에 로그인 요청 (Retrofit)
      */
-    private void performLogin(int userId, String password) {
-        LoginRequest loginData = new LoginRequest(userId, password);
+    private void performLogin(int userId, String password, String fcmToken) {
+        // ▼▼▼ [핵심] LoginRequest 생성 시 fcmToken을 함께 전달합니다. ▼▼▼
+        LoginRequest loginData = new LoginRequest(userId, password, fcmToken);
 
         apiService.login(loginData).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                // ... (기존 JWT 해독 및 분기 로직은 그대로 유지) ...
                 if (response.isSuccessful() && response.body() != null) {
-                    // 로그인 성공
-                    LoginResponse loginResponse = response.body();
-                    String token = loginResponse.getAccessToken();
-                    Log.d(TAG, "로그인 성공! 수신된 토큰: " + token);
+                    String accessToken = response.body().getAccessToken();
+                    saveToken(accessToken);
+                    try {
+                        JWT jwt = new JWT(accessToken);
+                        Claim roleClaim = jwt.getClaim("role");
+                        String role = roleClaim.asString();
 
-                    saveToken(token); // 토큰 저장
-                    Toast.makeText(LoginActivity.this, "✅ 로그인 성공!", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "JWT 해독 성공! 역할(Role): " + role);
 
-                    // 로그인 성공 후 온보딩 화면으로 이동
-                    Intent intent = new Intent(LoginActivity.this, OnboardingSimpleActivity.class);
-                    startActivity(intent);
-                    finish();
+                        if ("admin".equals(role)) {
+                            Toast.makeText(LoginActivity.this, "✅ 관리자 로그인 성공!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, OnboardingSimpleActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(LoginActivity.this, "✅ 로그인 성공!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, OnboardingSimpleActivity.class);
+                            startActivity(intent);
+                        }
+                        finish();
+                    } catch (Exception e) {
+                        Log.e(TAG, "JWT 토큰 해독 중 오류 발생", e);
+                    }
                 } else {
-                    // 로그인 실패 (예: 잘못된 학번/비밀번호, 서버 오류 등)
                     Log.w(TAG, "서버 로그인 실패, HTTP " + response.code());
                     Toast.makeText(LoginActivity.this, "로그인에 실패했습니다. 학번과 비밀번호를 확인해주세요.", Toast.LENGTH_LONG).show();
                 }
@@ -104,35 +137,25 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
-                // 네트워크 통신 자체 실패
                 Log.e(TAG, "❌ 네트워크 통신 오류", t);
-                Toast.makeText(LoginActivity.this, "네트워크에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "네트워크에 연결할 수 없습니다.", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    /**
-     * 🔹 암호화 SharedPreferences에 JWT 토큰 저장
-     */
     private void saveToken(String token) {
+        // ... (토큰 저장 로직은 그대로 유지) ...
         try {
-            MasterKey masterKey = new MasterKey.Builder(getApplicationContext())
-                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                    .build();
-
+            MasterKey masterKey = new MasterKey.Builder(getApplicationContext()).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build();
             SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
-                    getApplicationContext(),
-                    "auth_prefs",
-                    masterKey,
+                    getApplicationContext(), "auth_prefs", masterKey,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
-
             sharedPreferences.edit().putString("jwt_token", token).apply();
             Log.d(TAG, "토큰이 암호화되어 안전하게 저장되었습니다.");
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "토큰 저장 실패", e);
-            Toast.makeText(this, "보안 저장소에 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 }

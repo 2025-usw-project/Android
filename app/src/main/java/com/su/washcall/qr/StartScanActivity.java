@@ -90,7 +90,7 @@ public class StartScanActivity extends AppCompatActivity {
                     intent.putExtra("server_message", data.getMessage());
                     startActivity(intent);
                 } else {
-                    Toast.makeText(StartScanActivity.this, "서버 응답 실패", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StartScanActivity.this, "서버 응답 실패 (코드: " + response.code() + ")", Toast.LENGTH_SHORT).show();
                 }
                 finish();
             }
@@ -98,10 +98,9 @@ public class StartScanActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NotNull Call<QRResponse> call, @NotNull Throwable t) {
                 Toast.makeText(StartScanActivity.this, "서버 통신 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e("QR_API", "오류: ", t);
+                Log.e("QR_API", "통신 오류: ", t);
                 finish();
             }
         });
     }
 }
-

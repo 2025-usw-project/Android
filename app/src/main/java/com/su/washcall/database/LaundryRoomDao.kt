@@ -1,36 +1,32 @@
-// 경로: app/src/main/java/com/su/washcall/database/LaundryDao.kt
 package com.su.washcall.database
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * LaundryRoom 테이블에 접근하기 위한 함수들을 정의하는 인터페이스입니다.
+ * Room 라이브러리가 이 인터페이스의 구현체를 자동으로 생성해줍니다.
+ */
 @Dao
 interface LaundryRoomDao {
-
-    // --- 데이터 삽입/갱신 ---
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLaundryRooms(rooms: List<LaundryRoom>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWashingMachines(machines: List<WashingMachine>)
-
-    // --- 데이터 조회 ---
-    // Flow를 사용하면 DB가 변경될 때마다 UI가 자동으로 업데이트됩니다. (권장)
-    @Query("SELECT * FROM laundry_room_table ORDER BY room_name ASC")
+    /**
+     * 데이터베이스에 저장된 모든 세탁실 목록을 Flow 형태로 반환합니다.
+     * 데이터가 변경되면 Flow가 새로운 리스트를 자동으로 발행하여 UI가 갱신될 수 있습니다.
+     */
+    @Query("SELECT * FROM laundry_rooms")
     fun getAllLaundryRooms(): Flow<List<LaundryRoom>>
 
-    @Query("SELECT * FROM washing_machine_table WHERE laundry_room_id = :roomId ORDER BY machine_name ASC")
-    fun getWashingMachinesByRoom(roomId: Int): Flow<List<WashingMachine>>
+    /**
+     * 새로운 세탁실 목록을 데이터베이스에 삽입합니다.
+     * 만약 동일한 Primary Key(roomId)를 가진 데이터가 이미 존재하면, 덮어씁니다 (REPLACE).
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(laundryRooms: List<LaundryRoom>)
 
-    // --- LiveData를 사용하는 예시 (선택 가능) ---
-    @Query("SELECT * FROM washing_machine_table WHERE laundry_room_id = :roomId ORDER BY machine_name ASC")
-    fun getWashingMachinesByRoomAsLiveData(roomId: Int): LiveData<List<WashingMachine>>
-
-    // --- ★★★ 웹소켓을 통한 상태 업데이트용 ★★★ ---
-    @Query("UPDATE washing_machine_table SET status = :newStatus WHERE machine_id = :machineId")
-    suspend fun updateMachineStatus(machineId: Int, newStatus: String)
+    /**
+     * 테이블에 있는 모든 데이터를 삭제합니다.
+     * 새로운 데이터로 갱신하기 전에 기존 데이터를 지울 때 사용됩니다.
+     */
+    @Query("DELETE FROM laundry_rooms")
+    suspend fun deleteAll()
 }
