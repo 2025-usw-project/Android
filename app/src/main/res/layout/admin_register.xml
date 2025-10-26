@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 1. 부모 레이아웃을 FrameLayout으로 변경하여 위젯을 겹치게 할 수 있도록 함 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#10132E">
+
+    <!-- 기존 회원가입 UI (LinearLayout) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- 관리자 회원가입 타이틀 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="관리자 회원가입"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editAdminName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/edit_text"
+            android:hint="이름"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA" />
+
+        <EditText
+            android:id="@+id/editAdminId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="관리자 ID (학번)"
+            android:inputType="number"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA" />
+
+        <EditText
+            android:id="@+id/editAdminPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="비밀번호"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA" />
+
+        <!-- 관리자 인증 코드 입력 필드 -->
+        <EditText
+            android:id="@+id/editAdminAuthCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"
+            android:hint="관리자 인증 코드"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA" />
+
+        <Button
+            android:id="@+id/btnAdminSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#D32F2F"
+            android:text="Admin Sign Up"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- 2. ProgressBar 위젯 추가 -->
+    <!-- 화면 정중앙에 위치하며, 처음에는 보이지 않도록 설정 -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" /> <!-- 처음에는 숨겨둠 -->
+
+</FrameLayout>

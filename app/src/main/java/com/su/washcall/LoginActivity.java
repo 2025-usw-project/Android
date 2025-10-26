@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View; // View import 추가
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -34,7 +35,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = "LoginActivity";
     private EditText editUserId, editPassword;
-    private Button btnLogin, btnSignUp;
+    // 1. ✨ btnAdminSignUp 변수 선언 추가
+    private Button btnLogin, btnSignUp, btnAdminSignUp;
     private ApiService apiService;
 
     @Override
@@ -47,7 +49,10 @@ public class LoginActivity extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnSignUp = findViewById(R.id.btnSignUp);
+        // 2. ✨ XML의 btnAdminSignUp 버튼과 변수를 연결
+        btnAdminSignUp = findViewById(R.id.btnAdminSignUp);
 
+        // 로그인 버튼 클릭 이벤트
         btnLogin.setOnClickListener(v -> {
             String userIdStr = editUserId.getText().toString().trim();
             String password = editPassword.getText().toString().trim();
@@ -63,8 +68,22 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "학번은 숫자로 입력해주세요.", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // 일반 회원가입 버튼 클릭 이벤트
         btnSignUp.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
+
+        // 3. ✨ [문제 해결] 관리자 회원가입 버튼 클릭 이벤트 추가
+        btnAdminSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // AdminRegisterActivity로 이동하는 Intent를 생성하고 실행
+                Intent intent = new Intent(LoginActivity.this, AdminRegisterActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+
+    // 아래의 나머지 코드는 모두 그대로 유지됩니다. (수정할 필요 없음)
 
     private void getFcmTokenAndLogin(int userId, String password) {
         FirebaseMessaging.getInstance().getToken()
@@ -94,12 +113,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if (response.isSuccessful() && response.body() != null) {
-                    // [로그인 성공]
                     String accessToken = response.body().getAccessToken();
                     Log.d(TAG, "서버로부터 받은 Access Token: " + accessToken);
-                    activity.saveToken(accessToken); // 토큰 저장
+                    activity.saveToken(accessToken);
 
-                    // ... (역할 분기 로직은 이미 완벽하므로 그대로 둡니다)
                     try {
                         JWT jwt = new JWT(accessToken);
                         Claim roleClaim = jwt.getClaim("role");
@@ -122,17 +139,15 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    // ▼▼▼▼▼ [핵심 수정] 실패 원인을 정확히 파악하기 위한 로그 추가 ▼▼▼▼▼
                     String errorBodyString = "응답 없음";
                     if (response.errorBody() != null) {
                         try {
-                            errorBodyString = response.errorBody().string(); // 서버가 보낸 실제 에러 메시지를 가져옵니다.
+                            errorBodyString = response.errorBody().string();
                         } catch (IOException e) {
                             errorBodyString = "에러 메시지를 읽는 데 실패했습니다.";
                         }
                     }
                     Log.e(TAG, "로그인 실패: HTTP Code=" + response.code() + ", 서버 응답=" + errorBodyString);
-                    // ▲▲▲▲▲ [핵심 수정] ▲▲▲▲▲
                     Toast.makeText(activity, "로그인에 실패했습니다. 학번과 비밀번호를 확인해주세요.", Toast.LENGTH_LONG).show();
                 }
             }
@@ -158,22 +173,18 @@ public class LoginActivity extends AppCompatActivity {
 
             SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
                     getApplicationContext(),
-                    "auth_prefs", // "금고" 이름은 "auth_prefs"로 올바르게 사용 중입니다.
+                    "auth_prefs",
                     masterKey,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
 
-            // ▼▼▼▼▼ [핵심 수정] ▼▼▼▼▼
-            // 토큰을 저장하는 "열쇠(key)"의 이름을 "jwt_token"에서 "access_token"으로 변경합니다.
             sharedPreferences.edit().putString("access_token", token).apply();
-            // ▲▲▲▲▲ [핵심 수정] ▲▲▲▲▲
 
-            Log.d(TAG, "토큰이 암호화되어 안전하게 저장되었습니다: " + token); // 저장된 토큰 값을 로그로 확인
+            Log.d(TAG, "토큰이 암호화되어 안전하게 저장되었습니다: " + token);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "토큰을 안전하게 저장하는 데 실패했습니다.", e);
             Toast.makeText(getApplicationContext(), "오류: 사용자 정보를 기기에 저장할 수 없습니다.", Toast.LENGTH_LONG).show();
         }
     }
-
 }

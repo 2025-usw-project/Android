@@ -30,8 +30,14 @@
             </intent-filter>
         </activity>
 
-        <!-- ✅ 회원가입 -->
+        <!-- ✅ 일반 회원가입 -->
         <activity android:name=".RegisterActivity" android:exported="false" />
+
+        <!--
+        ✨✨✨ [문제 해결] 관리자 회원가입 Activity 선언 추가 ✨✨✨
+        이 선언이 없으면 앱이 해당 화면을 찾지 못하고 강제 종료됩니다.
+        -->
+        <activity android:name=".AdminRegisterActivity" android:exported="false" />
 
         <!-- ✅ 온보딩 -->
         <activity android:name=".OnboardingSimpleActivity" android:exported="false" />
@@ -46,11 +52,11 @@
             android:exported="false"
             android:label="관리자 대시보드" />
 
-        <!-- ✅ 세탁기 상세 로그 -->
-<!--       <activity-->
-<!--            android:name=".WashingDetailActivity"-->
-<!--            android:exported="false"-->
-<!--            android:label="세탁기 상세 로그" />-->
+        <!-- ✅ 세탁기 상세 로그 (주석 처리됨) -->
+        <!--       <activity-->
+        <!--            android:name=".WashingDetailActivity"-->
+        <!--            android:exported="false"-->
+        <!--            android:label="세탁기 상세 로그" />-->
 
         <!-- ✅ 캘리브레이션 -->
         <activity
