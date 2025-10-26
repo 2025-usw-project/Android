@@ -1,34 +1,47 @@
+// 경로: app/src/main/java/com/su/washcall/network/RetrofitClient.kt
 package com.su.washcall.network
 
+import com.su.washcall.MyApplication // 1단계에서 만든 App 클래스를 import
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor // Logcat에 통신 로그를 찍기 위함
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory // JSON 변환기
+import retrofit2.converter.gson.GsonConverterFactory
+import com.su.washcall.network.AuthInterceptor // 2단계에서 만든 AuthInterceptor를 import
 
+
+/**
+ * 🔹 Retrofit 인스턴스를 관리하는 싱글톤 객체.
+ * by lazy를 사용하여, 필요한 시점에 안전하게 객체들을 생성합니다.
+ */
 object RetrofitClient {
 
-    // ⛔️ [매우 중요] ⛔️
-    // 여기에 너의 FastAPI 서버 기본 주소를 넣어야 해!
-    // (예: "http://192.168.0.10:8000/" 또는 "http://10.0.2.2:8000/" (에뮬레이터용))
-    // 반드시 "http://"로 시작하고 "/"로 끝나야 해.
+    // 🚨 에뮬레이터에서 로컬 PC의 서버에 접속하려면 이 주소를 사용해야 합니다.
     private const val BASE_URL = "https://unconical-kyong-frolicsome.ngrok-free.dev/"
 
-    // 네트워크 통신 로그를 찍어주는 OkHttp 클라이언트 설정
+    // OkHttpClient를 lazy 초기화
+    // AuthInterceptor가 App.prefs를 사용하므로, App 클래스가 초기화된 후 생성되어야 합니다.
     private val okHttpClient: OkHttpClient by lazy {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY // 요청/응답 내용을 모두 보여줌
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY // 통신 로그를 자세히 보기 위한 설정
+        }
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            //.addInterceptor(AuthInterceptor()) // 인자 없이 AuthInterceptor 생성
             .build()
     }
 
-    // Retrofit 인스턴스 생성 (lazy: 처음 사용할 때 딱 한 번만 만듦)
-    val instance: ApiService by lazy {
+    // Retrofit 인스턴스를 lazy 초기화
+    private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL) // 1. 기본 서버 주소 설정
-            .client(okHttpClient) // 2. 로그용 OkHttp 클라이언트 연결
-            .addConverterFactory(GsonConverterFactory.create()) // 3. JSON 변환기 설정
+            .baseUrl(BASE_URL)
+            .client(okHttpClient) // 위에서 생성한 OkHttpClient 사용
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ApiService::class.java) // 4. ApiService 인터페이스 구현
+    }
+
+    // ApiService 인터페이스 구현체도 lazy 초기화
+    // 외부에서는 RetrofitClient.instance 로 이 객체를 사용하게 됩니다.
+    val instance: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
     }
 }

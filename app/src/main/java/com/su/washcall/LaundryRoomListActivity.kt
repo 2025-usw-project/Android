@@ -7,7 +7,6 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.su.washcall.adapter.LaundryRoomAdapter // 1. 어댑터 임포트 (아직 안 만들었음)
@@ -18,7 +17,7 @@ class LaundryRoomListActivity : AppCompatActivity() {
     // 목록 데이터를 가져오기 위한 ViewModel
     private val laundryViewModel: LaundryViewModel by viewModels {
         // LaundryApplication과 Repository가 미리 정의되어 있어야 함
-        LaundryViewModelFactory((application as LaundryApplication).repository)
+        LaundryViewModelFactory((application as MyApplication).repository)
     }
 
     // '구독' 기능을 처리하기 위한 ViewModel (이전에 만듦)

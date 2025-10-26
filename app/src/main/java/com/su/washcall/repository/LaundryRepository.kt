@@ -43,7 +43,9 @@ class LaundryRepository(
      */
     suspend fun refreshAllDataFromServer(accessToken: String) {
         try {
-            val response = apiService.loadInitialData(accessToken)
+            // 🔴 수정 전: val response = apiService.loadInitialData(accessToken)
+            // ✅ 수정 후: accessToken 인자를 제거합니다.
+            val response = apiService.loadInitialData()
 
             if (response.isSuccessful) {
                 val serverData = response.body() ?: return // 서버 데이터가 없으면 종료

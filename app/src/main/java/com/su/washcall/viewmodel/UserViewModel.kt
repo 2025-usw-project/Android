@@ -41,8 +41,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             try {
+                // ApiService에 정의된 파라미터 순서와 개수에 맞게 호출합니다.
+                // subscribeToRoom 함수는 이제 roomName과 userSnum 두 개의 파라미터만 받습니다.
                 val response = apiService.subscribeToRoom(
-                    accessToken = "Bearer $token",
                     roomName = roomName,
                     userSnum = userSnum
                 )

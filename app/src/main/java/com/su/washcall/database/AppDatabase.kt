@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
 @Database(entities = [LaundryRoom::class, WashingMachine::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun laundryDao(): LaundryDao
+    abstract fun laundryRoomDao(): LaundryDao
 
     companion object {
         // @Volatile: 이 변수에 대한 모든 쓰기 작업이 즉시 다른 스레드에 보이도록 보장

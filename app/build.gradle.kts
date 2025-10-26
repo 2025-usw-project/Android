@@ -1,22 +1,25 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    id("com.google.devtools.ksp") version "1.9.22-1.0.17" ////
-    id("com.google.gms.google-services")//✅ Firebase 연동용
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.google.gms.google.services)
 }
+
 android {
-    namespace = "com.su.washcall"
-    compileSdk = 34
+    // --- [추가 시작] ---
+    namespace = "com.su.washcall" // "com.example.washcall"을 실제 패키지 이름으로 변경하세요.
+    compileSdk = 34 // 최신 안정 버전 SDK를 지정하는 것이 좋습니다.
 
     defaultConfig {
-        applicationId = "com.su.washcall"
-        minSdk = 23
+        applicationId = "com.su.washcall" // "com.example.washcall"을 실제 패키지 이름으로 변경하세요.
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    // --- [추가 끝] ---
 
     buildTypes {
         release {
@@ -27,14 +30,12 @@ android {
             )
         }
     }
-
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 }
 
@@ -43,22 +44,24 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // ✅ Firebase BoM (버전 일괄 관리)
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    // ✅ Android Security (암호화 저장소용)
+    // ✅ Firebase BoM - 버전 카탈로그(toml)를 통해 한번만 선언
+    implementation(platform(libs.firebase.bom))
+    // BoM을 선언했으므로, 아래 라이브러리들은 버전 없이 선언합니다.
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.analytics)
+
+    // ✅ Android Security (최신 안정 버전으로 변경)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // ✅ Room (로컬 DB)
-    val roomVersion = "2.6.1"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
+
+    // ✅ Room (로컬 DB) - toml 파일에서 roomVersion을 참조하도록 변경 (아래 후속 조치 필요)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     // ✅ 코루틴 (비동기)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -66,7 +69,7 @@ dependencies {
 
     // ✅ Lifecycle (lifecycleScope 사용)
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime:2.7.0")
+    // lifecycle-runtime-ktx가 runtime을 포함하므로 아래 라인은 삭제해도 무방합니다.
 
     // ✅ Retrofit (서버 통신)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -77,7 +80,11 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
 
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0") //재용이가 만들라고한거//
-    implementation("com.auth0.android:jwtdecode:2.0.2")//jwt해석//
-}
+    // ✅ LiveData & JWT
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("com.auth0.android:jwtdecode:2.0.2")
 
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+}
