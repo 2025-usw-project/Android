@@ -13,8 +13,8 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 import com.su.washcall.network.washmachinResponse.MachineInfo // 👈 2단계에서 만들 클래스 import
-import retrofit2.http.GET // 👈 GET import
-import retrofit2.http.Query // 👈 Query import
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -66,7 +66,7 @@ interface ApiService {
     /**
      * (관리자) 새로운 세탁 기기를 서버에 등록합니다.
      */
-    @POST("/admin_add_device")
+    @POST("/admin/add_device")
     suspend fun adminAddDevice(
         @Header("access_token") accessToken: String,
         @Body body: AdminAddDeviceRequest
@@ -80,4 +80,12 @@ interface ApiService {
         @Header("access_token") accessToken: String,
         @Query("room_id") roomId: Int // 특정 세탁실의 기기를 조회
     ): Response<List<MachineInfo>> // MachineInfo 객체의 리스트를 받음
+
+    // ApiService.kt (수정 필요 없음)
+    //룸 등록
+    @POST("/admin/add_room")
+    suspend fun addLaundryRoom(
+        @Header("Authorization") accessToken: String,
+        @Body body: AddRoomRequest // 이 body의 내용이 1단계에서 수정한대로 자동으로 적용됨
+    ): Response<RoomResponse>
 }

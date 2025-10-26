@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.su.washcall.network.ApiService
 import com.su.washcall.network.RetrofitClient
-import com.su.washcall.network.washmachinRequest.AdminAddDeviceRequest // 올바른 모델 클래스 import
+import com.su.washcall.network.washmachinRequest.*
 import kotlinx.coroutines.launch
 import com.su.washcall.network.washmachinResponse.MachineInfo
 
@@ -35,6 +35,9 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _machineListResult = MutableLiveData<MachineListResult>()
     val machineListResult: LiveData<MachineListResult> = _machineListResult
+
+    private val _addRoomResult = MutableLiveData<RegisterResult>()
+    val addRoomResult: LiveData<RegisterResult> = _addRoomResult
     /**
      * 🔹 서버로 세탁기 정보를 전송하는 함수 (서버 명세에 맞게 수정)
      * roomId와 machineName 파라미터를 추가합니다.
@@ -99,6 +102,34 @@ class AdminViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } catch (e: Exception) {
                 _machineListResult.value = MachineListResult.Failure("서버 연결 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun addNewLaundryRoom(roomName: String) { // 파라미터를 roomName 하나만 받도록 변경
+        viewModelScope.launch {
+            _addRoomResult.value = RegisterResult.Loading
+            val token = getToken()
+            if (token.isNullOrEmpty()) {
+                _addRoomResult.value = RegisterResult.Failure("로그인이 필요합니다.")
+                return@launch
+            }
+
+            try {
+                // ★★★ roomName만 사용하여 요청 객체 생성 ★★★
+                val request = AddRoomRequest(roomName = roomName)
+                val response = apiService.addLaundryRoom("Bearer $token", request)
+
+                if (response.isSuccessful) {
+                    _addRoomResult.value = RegisterResult.Success("새로운 세탁실이 등록되었습니다.")
+                    // 참고: 여기서 사용자 화면의 세탁실 목록을 새로고침 하도록
+                    // 전체 목록 조회 API를 다시 호출하는 로직을 추가하면 좋습니다.
+                } else {
+                    val errorMsg = response.errorBody()?.string() ?: "세탁실 등록 실패"
+                    _addRoomResult.value = RegisterResult.Failure(errorMsg)
+                }
+            } catch (e: Exception) {
+                _addRoomResult.value = RegisterResult.Failure("서버 연결 실패: ${e.message}")
             }
         }
     }
