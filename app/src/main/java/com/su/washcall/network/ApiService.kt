@@ -1,7 +1,6 @@
 // 경로: app/src/main/java/com/su/washcall/network/ApiService.kt
 package com.su.washcall.network
 
-import com.su.washcall.network.model.*
 import com.su.washcall.network.user.LoginRequest
 import com.su.washcall.network.user.LoginResponse
 import com.su.washcall.network.user.RegisterRequest
@@ -67,5 +66,5 @@ interface ApiService {
     @POST("/admin/add_room")
     suspend fun addLaundryRoom(
         @Body body: AddRoomRequest
-    ): Response<RoomResponse>
+    ): Response<AddRoomResponse>
 }
