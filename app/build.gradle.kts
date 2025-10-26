@@ -1,10 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.devtools.ksp") version "1.9.22-1.0.17"
-    id("com.google.gms.google-services") // ✅ Firebase 연동용
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17" ////
+    id("com.google.gms.google-services")//✅ Firebase 연동용
 }
-
 android {
     namespace = "com.su.washcall"
     compileSdk = 34
@@ -44,15 +43,14 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     // ✅ Firebase BoM (버전 일괄 관리)
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-database-ktx")
-
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    implementation("com.google.firebase:firebase-analytics")
     // ✅ Android Security (암호화 저장소용)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
@@ -79,5 +77,7 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
 
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0") //재용이가 만들라고한거//
+    implementation("com.auth0.android:jwtdecode:2.0.2")//jwt해석//
 }
 
