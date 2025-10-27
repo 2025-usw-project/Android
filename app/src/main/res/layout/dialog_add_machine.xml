@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <EditText
+        android:id="@+id/editTextMachineId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="세탁기 번호 (예: 1)"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/editTextMachineName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="세탁기 이름 (예: 1번 세탁기)"
+        android:inputType="text" />
+
+</LinearLayout>

@@ -1,86 +1,74 @@
-// C:/Users/eclipseuser/AndroidStudioProjects/washcall/app/src/main/java/com/su/washcall/MainActivity.java
-
+// 파일 경로: app/src/main/java/com/su/washcall/MainActivity.java
 package com.su.washcall;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.su.washcall.network.ApiService;
-import com.su.washcall.network.RetrofitClient;
-// ★★★ [수정] 회원가입에 필요한 RegisterRequest를 import 합니다. ★★★
-import com.su.washcall.network.user.RegisterRequest;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import retrofit2.Response;
+import com.su.washcall.adapter.LaundryRoomAdapter;
+import com.su.washcall.viewmodel.LaundryViewModel;
+import com.su.washcall.viewmodel.LaundryViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "MainActivity_API_Test";
-    private ApiService apiService;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    // 1. LaundryViewModel 변수를 선언합니다.
+    private LaundryViewModel laundryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 2. activity_main.xml 레이아웃을 설정합니다.
         setContentView(R.layout.activity_main);
 
-        // Retrofit 인스턴스 초기화
-        apiService = RetrofitClient.INSTANCE.getInstance();
+        // 3. ViewModelFactory를 사용하여 LaundryViewModel 인스턴스를 생성합니다.
+        //    (Kotlin의 by viewModels 역할을 자바에서는 ViewModelProvider가 수행합니다)
+        LaundryViewModelFactory factory = new LaundryViewModelFactory(getApplication());
+        laundryViewModel = new ViewModelProvider(this, factory).get(LaundryViewModel.class);
 
-        // --- 테스트를 위한 회원가입 자동 호출 코드 ---
-        executorService.execute(() -> {
-            Log.d(TAG, "FastAPI 회원가입 테스트 시작...");
-            try {
-                // 중복되지 않는 고유한 학번을 만들기 위한 임시 코드
-                // 예: 1 + (현재 시간의 마지막 4자리) = 1xxxx
-                String uniqueIdString = "1" + System.currentTimeMillis() % 10000;
-                int uniqueUserId = Integer.parseInt(uniqueIdString);
+        // 4. RecyclerView를 레이아웃에서 찾습니다.
+        RecyclerView recyclerView = findViewById(R.id.rv_laundry_rooms);
 
-                // ▼▼▼▼▼ [핵심 오류 수정] ▼▼▼▼▼
-                // LoginRequest가 아닌, 서버가 요구하는 RegisterRequest 객체를 생성합니다.
-                // 4개의 인자: 이름, 비밀번호, 역할(일반 사용자=false), 학번
-                RegisterRequest registerData = new RegisterRequest(
-                        "테스트유저" + uniqueUserId, // user_username
-                        "testpassword123",      // user_password
-                        true,                  // user_role
-                        uniqueUserId            // user_snum
-                );
-                // ▲▲▲▲▲ [핵심 오류 수정] ▲▲▲▲▲
+        // 5. LaundryRoomAdapter를 생성합니다. (Kotlin으로 만든 어댑터를 자바에서 그대로 사용)
+        //    아이템 클릭 시 동작할 람다(lambda)를 정의합니다.
+        final LaundryRoomAdapter adapter = new LaundryRoomAdapter(laundryRoom -> {
+            // 아이템 클릭 시 Toast 메시지를 띄웁니다.
+            Toast.makeText(this, laundryRoom.getRoomName() + " 선택됨", Toast.LENGTH_SHORT).show();
 
-                // 이제 register 메서드에 올바른 타입의 객체가 전달됩니다.
-                Response<Void> response = apiService.register(registerData).execute();
+            Intent intent = new Intent(MainActivity.this, WashingMachineActivity.class);
+            intent.putExtra("ROOM_ID", laundryRoom.getRoomId());
+            intent.putExtra("ROOM_NAME", laundryRoom.getRoomName());
+            startActivity(intent);
 
-                // UI 스레드에서 결과 로깅
-                runOnUiThread(() -> {
-                    if (response.isSuccessful()) {
-                        Log.d(TAG, "✅ 테스트 회원가입 성공! HTTP " + response.code());
-                    } else {
-                        String errorBody = "";
-                        try {
-                            if (response.errorBody() != null) {
-                                errorBody = response.errorBody().string();
-                            }
-                        } catch (IOException e) {
-                            // 오류 무시
-                        }
-                        Log.e(TAG, "❌ 테스트 회원가입 실패: HTTP " + response.code() + ", 오류: " + errorBody);
-                    }
-                });
+            return null;
+        });
 
-            } catch (Exception e) {
-                Log.e(TAG, "테스트 회원가입 중 예외 발생", e);
+        // 6. RecyclerView에 어댑터와 레이아웃 매니저를 설정합니다.
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // 7. ViewModel의 세탁실 목록 데이터(allLaundryRooms)를 관찰(observe)합니다.
+        laundryViewModel.getAllLaundryRooms().observe(this, rooms -> {
+            if (rooms != null) {
+                // DB 데이터가 변경될 때마다 어댑터에 새로운 목록을 제출하여 UI를 갱신합니다.
+                adapter.submitList(rooms);
+                Log.d("MainActivity", "세탁실 목록 업데이트: " + rooms.size() + "개");
             }
         });
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdownNow();
-        }
+        // 8. (선택사항) ViewModel의 데이터 로딩 상태나 오류 메시지를 관찰하여 사용자에게 피드백을 줍니다.
+        laundryViewModel.getOperationStatus().observe(this, status -> {
+            if (status != null) {
+                Toast.makeText(this, status, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // 9. 앱이 처음 시작될 때 서버로부터 최신 데이터를 가져오도록 요청합니다.
+        laundryViewModel.refreshData();
     }
 }

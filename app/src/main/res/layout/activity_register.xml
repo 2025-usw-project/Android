@@ -1,54 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#10132E">
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    tools:context=".RegisterActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="회원가입"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- 이름 입력 필드 -->
     <EditText
         android:id="@+id/editUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/edit_text"
         android:hint="이름"
         android:inputType="textPersonName"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textColorHint="#AAAAAA" />
+        android:layout_marginBottom="16dp"/>
 
+    <!-- 학번(아이디) 입력 필드 -->
     <EditText
-
         android:id="@+id/editUserId"
-        android:hint="학번"
-        android:inputType="number"
-        android:background="@android:drawable/edit_text"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textColorHint="#AAAAAA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"/>
+        android:hint="학번 (ID)"
+        android:inputType="number"
+        android:layout_marginBottom="16dp"/>
 
+    <!-- 비밀번호 입력 필드 -->
     <EditText
         android:id="@+id/editPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="비밀번호"
         android:inputType="textPassword"
-        android:background="@android:drawable/edit_text"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textColorHint="#AAAAAA"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginBottom="24dp"/>
 
+    <!-- 회원가입 버튼 -->
     <Button
         android:id="@+id/btnSignUp"
-        android:text="Sign Up"
-        android:backgroundTint="#6750A4"
-        android:textColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"/>
+        android:text="가입하기" />
 
 </LinearLayout>

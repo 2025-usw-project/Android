@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.su.washcall.R
 import com.su.washcall.database.WashingMachine
 
-class WashingMachineAdapter : ListAdapter<WashingMachine, WashingMachineAdapter.WashingMachineViewHolder>(DiffCallback) {
+class WashingMachineAdapter(private val onItemClicked: (WashingMachine) -> Unit) : ListAdapter<WashingMachine, WashingMachineAdapter.WashingMachineViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WashingMachineViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -21,6 +21,9 @@ class WashingMachineAdapter : ListAdapter<WashingMachine, WashingMachineAdapter.
 
     override fun onBindViewHolder(holder: WashingMachineViewHolder, position: Int) {
         val currentMachine = getItem(position)
+        holder.itemView.setOnClickListener {
+            onItemClicked(currentMachine)
+        }
         holder.bind(currentMachine)
     }
 

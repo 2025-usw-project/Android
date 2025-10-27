@@ -13,6 +13,9 @@ interface LaundryRoomDao {
 
     // --- 데이터 삽입/갱신 ---
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(laundryRoom: LaundryRoom)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLaundryRooms(rooms: List<LaundryRoom>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -33,4 +36,6 @@ interface LaundryRoomDao {
     // --- ★★★ 웹소켓을 통한 상태 업데이트용 ★★★ ---
     @Query("UPDATE washing_machine_table SET status = :newStatus WHERE machine_id = :machineId")
     suspend fun updateMachineStatus(machineId: Int, newStatus: String)
+
+
 }

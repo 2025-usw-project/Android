@@ -24,8 +24,20 @@ class MyApplication : Application() {
     }
 
     companion object {
+        // --- ▼▼▼▼▼ [최종 수정] ▼▼▼▼▼ ---
+        // @JvmStatic을 속성에 직접 적용하여 static getter를 자동으로 생성하게 합니다.
+        @JvmStatic
         lateinit var prefs: EncryptedPrefs
-            private set
+            private set // 외부에서 prefs 변수 자체를 다른 객체로 교체하는 것을 방지 (선택사항이지만 권장)
+
+        // 충돌을 일으키는 중복된 함수는 삭제합니다.
+        /*
+        @JvmStatic
+        fun getPrefs(): EncryptedPrefs {
+            return prefs
+        }
+        */
+        // --- ▲▲▲▲▲ [최종 수정] ▲▲▲▲▲ ---
     }
 
     override fun onCreate() {

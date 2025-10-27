@@ -1,6 +1,9 @@
+<!-- 파일 경로: res/values/themes.xml -->
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme._2gradeproject" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <!-- ▼▼▼▼▼ [핵심 수정] parent의 ".DarkActionBar"를 ".NoActionBar"로 변경합니다. ▼▼▼▼▼ -->
+    <style name="Theme._2gradeproject" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- ▲▲▲▲▲ [핵심 수정] ▲▲▲▲▲ -->
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
