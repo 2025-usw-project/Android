@@ -133,11 +133,10 @@ class LaundryViewModelFactory(private val application: Application) : ViewModelP
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LaundryViewModel::class.java)) {
-            // ✅ Repository 생성 로직은 동일
-            val apiService = RetrofitClient.instance
-            val laundryRoomDao = AppDatabase.getDatabase(application).laundryRoomDao()
-            val repository = LaundryRepository(apiService, laundryRoomDao)
-            // ✅ ViewModel 생성 시 repository와 application을 함께 전달
+            // ✅ 1. MyApplication에서 이미 만들어진 repository를 가져옵니다.
+            val repository = (application as MyApplication).repository
+
+            // ✅ 3. 가져온 repository와 application을 ViewModel에 전달합니다.
             return LaundryViewModel(repository, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

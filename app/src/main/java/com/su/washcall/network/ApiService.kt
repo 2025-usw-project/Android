@@ -1,6 +1,9 @@
 // 경로: app/src/main/java/com/su/washcall/network/ApiService.kt
 package com.su.washcall.network
 
+// 1. ✨ AdminRegisterActivity에서 사용할 클래스들을 import 합니다.
+import com.su.washcall.network.user.AdminRegistrationRequest
+import com.su.washcall.network.user.AdminRegistrationResponse
 import com.su.washcall.network.user.LoginRequest
 import com.su.washcall.network.user.LoginResponse
 import com.su.washcall.network.user.RegisterRequest
@@ -13,13 +16,20 @@ import retrofit2.http.*
 interface ApiService {
 
     // --- 1. 인증 API ---
-    // 이 함수들은 인터셉터에서 헤더 추가를 제외하므로, 파라미터가 필요 없습니다.
-    // LoginActivity가 Java로 되어 있어 Call<> 타입을 사용합니다.
+
     @POST("/login")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
     @POST("/register")
     fun register(@Body registerRequest: RegisterRequest): Call<Void>
+
+    /**
+     * ✨ [핵심 수정] AdminRegisterActivity.java에서 호출할 관리자 회원가입 함수를 추가합니다.
+     * 서버 명세에 따라 일반 회원가입과 동일한 "/register" 주소를 사용합니다.
+     * 이 함수가 누락되어 있어 오류가 발생하고 있었습니다.
+     */
+    @POST("/register")
+    fun registerAdmin(@Body registrationRequest: AdminRegistrationRequest): Call<AdminRegistrationResponse>
 
 
     // --- 2. 일반 사용자 API ---
@@ -33,7 +43,7 @@ interface ApiService {
 
     @POST("/load")
     suspend fun loadInitialData(
-        @Body request: LoadDataRequest // ◀️ AdminMachinListRequest 에서 LoadDataRequest 로 수정
+        @Body request: LoadDataRequest
     ): Response<List<LoadDataResponse>>
 
     @POST("/reserve")
