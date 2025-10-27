@@ -7,6 +7,10 @@ import com.google.gson.annotations.SerializedName
  */
 data class RoomSubscribeRequest(
     // 서버 명세에 따라 room_id (Int)를 전송
-    @SerializedName("room_id")
-    val roomId: Int
+    @SerializedName("room_name")
+    val roomName: String,
+
+    @SerializedName("user_snum")
+    val userSnum: String
+
 )

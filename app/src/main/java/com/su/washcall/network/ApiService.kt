@@ -25,13 +25,16 @@ interface ApiService {
     // --- 2. 일반 사용자 API ---
     // 모든 @Header 파라미터를 제거하고, 코루틴 사용을 위해 suspend fun으로 통일합니다.
 
-    @POST("/device_subscribe")
-    suspend fun subscribeDevice(
-        @Body body: RoomSubscribeRequest
+    @GET("/device_subscribe")
+    suspend fun subscribeToRoom( // 또는 subscribeDevice
+        @Query("room_name") roomName: String,
+        @Query("user_snum") userSnum: String
     ): Response<MessageResponse>
 
     @POST("/load")
-    suspend fun loadInitialData(): Response<List<LoadDataResponse>> // 파라미터 없음
+    suspend fun loadInitialData(
+        @Body request: LoadDataRequest // ◀️ AdminMachinListRequest 에서 LoadDataRequest 로 수정
+    ): Response<List<LoadDataResponse>>
 
     @POST("/reserve")
     suspend fun reserveDevice(
@@ -43,12 +46,6 @@ interface ApiService {
         @Body body: NotifyRequest
     ): Response<MessageResponse>
 
-    @GET("/device_subscribe")
-    suspend fun subscribeToRoom(
-        @Query("room_name") roomName: String,
-        @Query("user_snum") userSnum: String
-    ): Response<SubscribeResponse>
-
 
     // --- 3. 관리자 API ---
     // 모든 @Header 파라미터를 제거합니다.
@@ -59,14 +56,12 @@ interface ApiService {
     ): Response<AddDeviceResponse>
 
     @POST("/admin/machines")
-    suspend fun getAdminMachineList(@Body request: AdminMachinListRequest
+    suspend fun getAdminMachineList(
+        @Body request: AdminMachinListRequest
     ): Response<AdminMachinListResponse>
 
     @POST("/admin/add_room")
     suspend fun addLaundryRoom(
         @Body body: AddRoomRequest
     ): Response<AddRoomResponse>
-
-    @GET("/api/load") // 서버의 실제 API 엔드포인트 주소
-    suspend fun loadInitialData(@Header("Authorization") token: String): Response<List<LoadDataResponse>>
 }

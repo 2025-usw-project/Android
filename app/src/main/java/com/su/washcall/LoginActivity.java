@@ -14,6 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+// ▼▼▼ [수정 1] JWT 디코딩 라이브러리와 관리자 화면을 import 합니다. ▼▼▼
+import com.auth0.android.jwt.Claim;
+import com.auth0.android.jwt.JWT;
+import com.su.washcall.AdminDashboardActivity; // 관리자 화면 경로
+
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.su.washcall.network.ApiService;
 import com.su.washcall.network.RetrofitClient;
@@ -27,10 +32,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// ▼▼▼ [수정 1] Callback<LoginResponse>를 구현(implements)하도록 명시합니다. ▼▼▼
 public class LoginActivity extends AppCompatActivity implements Callback<LoginResponse> {
 
-    private final String TAG = "LoginActivity_LOG"; // 로그 태그를 더 명확하게 변경
+    private final String TAG = "LoginActivity_LOG";
     private EditText editUserId, editPassword;
     private Button btnLogin, btnSignUp;
     private ApiService apiService;
@@ -40,7 +44,6 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Kotlin의 RetrofitClient 싱글톤 인스턴스를 올바르게 가져옵니다.
         apiService = RetrofitClient.INSTANCE.getInstance();
 
         editUserId = findViewById(R.id.editUserId);
@@ -58,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
             }
             try {
                 int userIdInt = Integer.parseInt(userIdStr);
-                getFcmTokenAndLogin(userIdInt, password); // 로그인 절차 시작
+                getFcmTokenAndLogin(userIdInt, password);
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "학번은 숫자로 입력해주세요.", Toast.LENGTH_SHORT).show();
             }
@@ -73,73 +76,101 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
                     String fcmToken;
                     if (!task.isSuccessful() || task.getResult() == null) {
                         Log.w(TAG, "FCM 토큰 가져오기 실패", task.getException());
-                        fcmToken = "token_fetch_failed"; // 실패 시 대체 토큰
+                        fcmToken = "token_fetch_failed";
                     } else {
                         fcmToken = task.getResult();
                         Log.d(TAG, "FCM Token: " + fcmToken);
                     }
-                    // ▼▼▼ [수정 2] 가져온 fcmToken으로 performLogin 함수를 호출합니다. ▼▼▼
                     performLogin(userId, password, fcmToken);
                 });
     }
 
-    // ▼▼▼ [수정 3] 서버에 실제 로그인 요청을 보내는 함수를 정의합니다. ▼▼▼
     private void performLogin(int userId, String password, String fcmToken) {
         LoginRequest loginRequest = new LoginRequest(userId, password, fcmToken);
-        // 비동기 방식으로 API를 호출하고, 응답 처리는 onResponse/onFailure 콜백에 위임합니다.
         apiService.login(loginRequest).enqueue(this);
     }
 
-    // ▼▼▼ [수정 4] Callback 인터페이스의 onResponse 메소드를 구현합니다. 여기가 유일한 응답 처리 지점입니다. ▼▼▼
     @Override
     public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
         if (response.isSuccessful() && response.body() != null) {
             try {
-                // 1. 서버로부터 받은 토큰
                 String receivedToken = response.body().getAccessToken();
 
-                // 2. 암호화된 SharedPreferences 인스턴스 생성
-                MasterKey masterKey = new MasterKey.Builder(getApplicationContext())
-                        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                        .build();
+                // 1. 토큰을 암호화하여 저장합니다.
+                saveToken(receivedToken);
 
-                SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
-                        getApplicationContext(),
-                        "auth_prefs", // 모든 ViewModel에서 사용할 파일 이름과 통일
-                        masterKey,
-                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                );
-
-                // 3. 토큰을 "access_token" 키로 저장 (가장 중요한 부분)
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("access_token", receivedToken);
-                editor.apply();
-
-                Log.d(TAG, "토큰 저장 성공. Key: access_token");
-
-                // 4. 메인 화면으로 전환
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish(); // 로그인 화면 종료
+                // 2. ▼▼▼ [핵심 수정] 토큰을 분석하여 권한에 따라 화면을 분기시킵니다. ▼▼▼
+                navigateToNextActivityByRole(receivedToken);
 
             } catch (GeneralSecurityException | IOException e) {
                 Log.e(TAG, "암호화된 SharedPreferences 처리 중 오류 발생", e);
                 Toast.makeText(getApplicationContext(), "로그인 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         } else {
-            // 로그인 실패 처리 (서버가 4xx, 5xx 에러 응답)
             Log.e(TAG, "로그인 실패: " + response.code());
             Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // ▼▼▼ [수정 5] 네트워크 통신 자체에 실패했을 때 호출되는 콜백입니다. ▼▼▼
     @Override
     public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
         Log.e(TAG, "로그인 API 통신 실패", t);
         Toast.makeText(getApplicationContext(), "서버와 통신할 수 없습니다.", Toast.LENGTH_SHORT).show();
     }
 
-    // ▼▼▼ [수정 6] 불필요하고 중복되는 onResponse, saveToken 함수를 모두 삭제했습니다. ▼▼▼
+    /**
+     * 🔹 토큰을 암호화된 SharedPreferences에 저장하는 함수.
+     */
+    private void saveToken(String token) throws GeneralSecurityException, IOException {
+        MasterKey masterKey = new MasterKey.Builder(getApplicationContext())
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build();
+
+        SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                getApplicationContext(),
+                "auth_prefs", // 파일 이름
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        );
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("access_token", token);
+        editor.apply();
+
+        Log.d(TAG, "토큰 저장 성공. Key: access_token");
+    }
+
+    /**
+     * 🔹 [핵심] 토큰을 디코딩하고 권한(role)에 따라 적절한 Activity로 이동하는 함수.
+     */
+    private void navigateToNextActivityByRole(String token) {
+        Intent intent;
+        try {
+            // JWT 토큰 디코딩
+            JWT jwt = new JWT(token);
+            // 'role' 클레임(Claim) 가져오기
+            Claim roleClaim = jwt.getClaim("role");
+            String role = roleClaim.asString();
+
+            Log.d(TAG, "추출된 사용자 권한: " + role);
+
+            // 'ADMIN' 또는 'USER' 문자열과 비교
+            if ("ADMIN".equals(role)) {
+                Log.d(TAG, "관리자 확인 -> AdminBoardingActivity로 이동");
+                intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+            } else { // 'USER' 또는 그 외의 경우 모두 사용자 화면으로
+                Log.d(TAG, "사용자 확인 -> MainActivity로 이동");
+                intent = new Intent(LoginActivity.this, MainActivity.class);
+            }
+        } catch (Exception e) {
+            // 토큰 디코딩 실패 등 예외 발생 시 기본 화면으로 이동
+            Log.e(TAG, "토큰 처리 중 오류 발생. 기본 화면으로 이동합니다.", e);
+            Toast.makeText(this, "세션 정보를 처리하는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+            intent = new Intent(LoginActivity.this, MainActivity.class);
+        }
+
+        startActivity(intent);
+        finish(); // 로그인 화면 종료
+    }
 }

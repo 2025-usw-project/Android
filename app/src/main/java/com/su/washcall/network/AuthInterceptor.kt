@@ -19,7 +19,7 @@ class AuthInterceptor : Interceptor {
         }
 
         // MyApplication에 저장된 전역 prefs 객체에서 토큰을 직접 가져옴
-        val token = MyApplication.prefs.token
+        val token = MyApplication.prefs.accessToken
 
         // 토큰이 있는 경우에만 헤더에 추가
         val newRequest = if (!token.isNullOrBlank()) {

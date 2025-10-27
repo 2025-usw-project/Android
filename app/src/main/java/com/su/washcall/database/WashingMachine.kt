@@ -32,6 +32,6 @@ data class WashingMachine(
     @ColumnInfo(name = "machine_name")
     val machineName: String, // 세탁기 이름 (예: "1번 세탁기")
 
-    @ColumnInfo(name = "status")
+    @ColumnInfo(name = "status", index = true)
     val status: String     // 상태 (예: "대기중", "세탁중", "고장")
 )
