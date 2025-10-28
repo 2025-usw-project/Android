@@ -1,4 +1,3 @@
-// 경로: app/src/main/java/com/su/washcall/LoginActivity.java
 package com.su.washcall;
 
 import android.content.Intent;
@@ -14,10 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
-// ▼▼▼ [수정 1] JWT 디코딩 라이브러리와 관리자 화면을 import 합니다. ▼▼▼
 import com.auth0.android.jwt.Claim;
 import com.auth0.android.jwt.JWT;
-import com.su.washcall.AdminDashboardActivity; // 관리자 화면 경로
+import com.su.washcall.AdminDashboardActivity;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.su.washcall.network.ApiService;
@@ -36,7 +34,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
 
     private final String TAG = "LoginActivity_LOG";
     private EditText editUserId, editPassword;
-    private Button btnLogin, btnSignUp;
+    private Button btnLogin, btnSignUp, btnAdminSignUp;
     private ApiService apiService;
 
     @Override
@@ -50,6 +48,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         editPassword = findViewById(R.id.editPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnSignUp = findViewById(R.id.btnSignUp);
+        btnAdminSignUp = findViewById(R.id.btnAdminSignUp);
 
         btnLogin.setOnClickListener(v -> {
             String userIdStr = editUserId.getText().toString().trim();
@@ -68,6 +67,11 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         });
 
         btnSignUp.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
+
+        btnAdminSignUp.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, AdminRegisterActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void getFcmTokenAndLogin(int userId, String password) {
@@ -95,13 +99,8 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         if (response.isSuccessful() && response.body() != null) {
             try {
                 String receivedToken = response.body().getAccessToken();
-
-                // 1. 토큰을 암호화하여 저장합니다.
                 saveToken(receivedToken);
-
-                // 2. ▼▼▼ [핵심 수정] 토큰을 분석하여 권한에 따라 화면을 분기시킵니다. ▼▼▼
                 navigateToNextActivityByRole(receivedToken);
-
             } catch (GeneralSecurityException | IOException e) {
                 Log.e(TAG, "암호화된 SharedPreferences 처리 중 오류 발생", e);
                 Toast.makeText(getApplicationContext(), "로그인 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
@@ -118,9 +117,6 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         Toast.makeText(getApplicationContext(), "서버와 통신할 수 없습니다.", Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * 🔹 토큰을 암호화된 SharedPreferences에 저장하는 함수.
-     */
     private void saveToken(String token) throws GeneralSecurityException, IOException {
         MasterKey masterKey = new MasterKey.Builder(getApplicationContext())
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -128,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
 
         SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
                 getApplicationContext(),
-                "auth_prefs", // 파일 이름
+                "auth_prefs",
                 masterKey,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
@@ -141,36 +137,32 @@ public class LoginActivity extends AppCompatActivity implements Callback<LoginRe
         Log.d(TAG, "토큰 저장 성공. Key: access_token");
     }
 
-    /**
-     * 🔹 [핵심] 토큰을 디코딩하고 권한(role)에 따라 적절한 Activity로 이동하는 함수.
-     */
     private void navigateToNextActivityByRole(String token) {
         Intent intent;
         try {
-            // JWT 토큰 디코딩
             JWT jwt = new JWT(token);
-            // 'role' 클레임(Claim) 가져오기
             Claim roleClaim = jwt.getClaim("role");
             String role = roleClaim.asString();
 
             Log.d(TAG, "추출된 사용자 권한: " + role);
 
-            // 'ADMIN' 또는 'USER' 문자열과 비교
             if ("ADMIN".equals(role)) {
-                Log.d(TAG, "관리자 확인 -> AdminBoardingActivity로 이동");
+                Log.d(TAG, "관리자 확인 -> AdminDashboardActivity로 이동");
                 intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
-            } else { // 'USER' 또는 그 외의 경우 모두 사용자 화면으로
-                Log.d(TAG, "사용자 확인 -> MainActivity로 이동");
-                intent = new Intent(LoginActivity.this, MainActivity.class);
+            } else {
+                // ▼▼▼▼▼ [핵심 수정] 사용자일 경우 이동할 화면을 UserDashboardActivity로 변경 ▼▼▼▼▼
+                Log.d(TAG, "사용자 확인 -> UserDashboardActivity로 이동");
+                intent = new Intent(LoginActivity.this, UserDashboardActivity.class);
+                // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
             }
         } catch (Exception e) {
-            // 토큰 디코딩 실패 등 예외 발생 시 기본 화면으로 이동
             Log.e(TAG, "토큰 처리 중 오류 발생. 기본 화면으로 이동합니다.", e);
             Toast.makeText(this, "세션 정보를 처리하는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
-            intent = new Intent(LoginActivity.this, MainActivity.class);
+            // 여기도 만일을 대비해 UserDashboardActivity로 수정
+            intent = new Intent(LoginActivity.this, UserDashboardActivity.class);
         }
 
         startActivity(intent);
-        finish(); // 로그인 화면 종료
+        finish();
     }
 }

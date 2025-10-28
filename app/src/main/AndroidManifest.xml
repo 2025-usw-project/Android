@@ -2,13 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.su.washcall">
-    <!-- ✅ 인터넷 및 카메라 권한 -->
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:name=".MyApplication"
@@ -21,53 +18,53 @@
         android:supportsRtl="true"
         android:theme="@style/Theme._2gradeproject"
         tools:targetApi="31">
-        <activity
-            android:name=".MachinListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RoomListActivity"
-            android:exported="false" /> <!-- ✅ 앱 실행 시: 로그인 화면 -->
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true">
+
+        <!-- 앱의 첫 시작 화면을 LoginActivity로 유지 -->
+        <activity android:name=".LoginActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- ✅ 회원가입 -->
+        </activity>
+
+        <!-- 다른 Activity 선언들 (기존 코드 유지) -->
+        <activity android:name=".MachinListActivity" android:exported="false" />
+        <activity android:name=".RoomListActivity" android:exported="false" />
+        <activity android:name=".RegisterActivity" android:exported="false" />
+        <activity android:name=".OnboardingSimpleActivity" android:exported="false" />
+        <activity android:name=".OnboardingSimple2Activity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".AdminDashboardActivity" android:exported="false" android:label="관리자 대시보드" />
+        <activity android:name=".CalibrationActivity" android:exported="false" android:label="캘리브레이션" />
+        <activity android:name=".qr.QRScanActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".qr.StartScanActivity" android:exported="true" />
+
+        <!-- ===================================================================== -->
+        <!-- 사용자 관련 Activity들의 관계를 명확하게 재정의합니다. -->
+        <!-- ===================================================================== -->
+
+        <!-- 1. 사용자 대시보드 (부모 없음) -->
         <activity
-            android:name=".RegisterActivity"
-            android:exported="false" /> <!-- ✅ 온보딩 -->
-        <activity
-            android:name=".OnboardingSimpleActivity"
+            android:name=".UserDashboardActivity"
             android:exported="false" />
+
+        <!-- 2. 세탁실 목록 (부모: UserDashboardActivity) -->
         <activity
-            android:name=".OnboardingSimple2Activity"
-            android:exported="false" /> <!-- ✅ 일반 사용자용 메인 -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" /> <!-- ✅ 관리자 모드 -->
-        <activity
-            android:name=".AdminDashboardActivity"
+            android:name=".UserRoomListActivity"
             android:exported="false"
-            android:label="관리자 대시보드" /> <!-- ✅ 세탁기 상세 로그 -->
-        <!-- <activity -->
-        <!-- android:name=".WashingDetailActivity" -->
-        <!-- android:exported="false" -->
-        <!-- android:label="세탁기 상세 로그" /> -->
-        <!-- ✅ 캘리브레이션 -->
+            android:parentActivityName=".UserDashboardActivity" />
+
+        <!-- 3. 세탁기 목록 (부모: UserRoomListActivity) -->
+        <!-- ▼▼▼ [핵심 수정] 문제가 되는 tools:theme 라인을 완전히 삭제하여 빌드 오류를 해결합니다. ▼▼▼ -->
         <activity
-            android:name=".CalibrationActivity"
+            android:name=".UserMachineListActivity"
             android:exported="false"
-            android:label="캘리브레이션" /> <!-- ✅ QR 스캔 관련 Activity -->
-        <activity
-            android:name=".qr.QRScanActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".qr.StartScanActivity"
-            android:exported="true" /> <!-- ✅ Firebase 메시징 서비스 (FCM 토큰 및 푸시 수신용) -->
+            android:parentActivityName=".UserRoomListActivity" />
+        <!-- ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ -->
+
+
+        <!-- ===================================================================== -->
+
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">

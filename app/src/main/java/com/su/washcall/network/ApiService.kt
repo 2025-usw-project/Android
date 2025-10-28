@@ -1,7 +1,9 @@
 // 경로: app/src/main/java/com/su/washcall/network/ApiService.kt
 package com.su.washcall.network
 
-// 1. ✨ AdminRegisterActivity에서 사용할 클래스들을 import 합니다.
+// ▼▼▼ [핵심 수정] Machine.java 클래스를 import 합니다. ▼▼▼
+//import com.su.washcall.Machine
+
 import com.su.washcall.network.user.AdminRegistrationRequest
 import com.su.washcall.network.user.AdminRegistrationResponse
 import com.su.washcall.network.user.LoginRequest
@@ -12,6 +14,7 @@ import com.su.washcall.network.washmachinResponse.*
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
+
 
 interface ApiService {
 
@@ -65,7 +68,7 @@ interface ApiService {
         @Body request: AdminAddDeviceRequest
     ): Response<AddDeviceResponse>
 
-    @POST("/admin/machines")
+    @POST("/load")
     suspend fun getAdminMachineList(
         @Body request: AdminMachinListRequest
     ): Response<AdminMachinListResponse>
@@ -74,4 +77,5 @@ interface ApiService {
     suspend fun addLaundryRoom(
         @Body body: AddRoomRequest
     ): Response<AddRoomResponse>
+
 }

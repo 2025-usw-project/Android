@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AdminDashboardActivity"
-    android:background="#10132E"> <!-- 1. 어두운 배경색 적용 -->
+    tools:context=".UserDashboardActivity"
+    android:background="#10132E"> <!-- 어두운 배경색 -->
 
-    <!-- 2. 타이틀 텍스트 색상 변경 -->
+    <!-- 타이틀 텍스트 -->
     <TextView
         android:id="@+id/tvDashboardTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:text="관리자 대시보드"
+        android:text="사용자"
         android:textColor="@android:color/white"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 3. 버튼들을 담을 LinearLayout 추가 및 중앙 배치 -->
+    <!-- UI 요소들을 중앙에 배치 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -32,23 +32,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- ▼▼▼ [오류 해결] 이 버튼의 ID를 'btnRoomCode'로 정확하게 지정합니다. ▼▼▼ -->
         <Button
-            android:id="@+id/btnAddNewRoom"
+            android:id="@+id/btnRoomCode"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="신규 세탁실 등록"
+            android:text="세탁실 등록 코드 입력"
             android:textSize="16sp"
-            app:backgroundTint="#4A4E69" /> <!-- 버튼 색상 적용 -->
+            app:backgroundTint="#4A4E69" />
+        <!-- ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ -->
 
+        <!-- '세탁실 및 세탁기 관리' 버튼 -->
         <Button
-            android:id="@+id/btnManageRooms"
+            android:id="@+id/btnEnterRoom"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="24dp"
             android:text="세탁실 및 세탁기 관리"
             android:textSize="16sp"
-            app:backgroundTint="#4A4E69" /> <!-- 버튼 색상 적용 -->
+            app:backgroundTint="#4A4E69" />
 
+        <!-- '건의사항' 버튼 -->
         <Button
             android:id="@+id/btnSuggestions"
             android:layout_width="match_parent"
@@ -56,23 +60,8 @@
             android:layout_marginTop="24dp"
             android:text="건의사항"
             android:textSize="16sp"
-            app:backgroundTint="#4A4E69" /> <!-- 버튼 색상 적용 -->
+            app:backgroundTint="#4A4E69" />
 
     </LinearLayout>
-
-    <!-- 로딩 오버레이는 수정 없이 그대로 둡니다. -->
-    <FrameLayout
-        android:id="@+id/loadingOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
